@@ -8,7 +8,7 @@
 		<version>2.7.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ars</groupId>
+	<groupId>bpa</groupId>
 	<artifactId>srv</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>srv</name>

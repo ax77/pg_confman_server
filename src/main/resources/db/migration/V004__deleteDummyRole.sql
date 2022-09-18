@@ -1,0 +1,1 @@
+delete from auth_role where auth_role_name = 'ROLE_DUMMY_STUB';

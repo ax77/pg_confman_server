@@ -24,7 +24,7 @@ public class AuthController {
 
 	@GetMapping("/users")
 	public ResponseEntity<?> getUsers() {
-		return new ResponseEntity<>(roleService.getRolesAvailableForUser(1L), HttpStatus.OK);
+		return new ResponseEntity<>(roleService.getByName("ROLE_ADMIN"), HttpStatus.OK);
 	}
 
 }

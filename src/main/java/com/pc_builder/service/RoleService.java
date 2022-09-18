@@ -8,4 +8,5 @@ import com.pc_builder.entity.AuthRole;
 public interface RoleService {
 	Optional<AuthRole> getById(Long id);
 	List<AuthRole> getRolesAvailableForUser(Long userId);
+	AuthRole getByName(String name);
 }

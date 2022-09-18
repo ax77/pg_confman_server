@@ -30,4 +30,9 @@ public class RoleServiceImpl implements RoleService {
 		return roleRepository.findRolesAvailableForUser(userId);
 	}
 
+	@Override
+	public AuthRole getByName(String name) {
+		return roleRepository.findByName(name);
+	}
+
 }

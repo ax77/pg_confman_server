@@ -8,9 +8,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pc_builder</groupId>
-	<artifactId>pc-builder</artifactId>
+	<artifactId>pc-builder-java</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>pc-builder</name>
+	<name>pc-builder-java</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

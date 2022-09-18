@@ -1,4 +1,4 @@
-package ars.srv.service.impl;
+package com.pc_builder.service.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ars.srv.entity.AuthRole;
-import ars.srv.repository.AuthRoleRepository;
-import ars.srv.service.RoleService;
+import com.pc_builder.entity.AuthRole;
+import com.pc_builder.repository.AuthRoleRepository;
+import com.pc_builder.service.RoleService;
 
 @Service
 public class RoleServiceImpl implements RoleService {

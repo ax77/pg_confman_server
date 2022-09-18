@@ -7,10 +7,10 @@
 		<version>2.7.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>bpa</groupId>
-	<artifactId>srv</artifactId>
+	<groupId>com.pc_builder</groupId>
+	<artifactId>pc-builder</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>srv</name>
+	<name>pc-builder</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

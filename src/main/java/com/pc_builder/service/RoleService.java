@@ -1,9 +1,9 @@
-package ars.srv.service;
+package com.pc_builder.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import ars.srv.entity.AuthRole;
+import com.pc_builder.entity.AuthRole;
 
 public interface RoleService {
 	Optional<AuthRole> getById(Long id);

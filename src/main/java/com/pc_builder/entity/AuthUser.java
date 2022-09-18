@@ -1,4 +1,4 @@
-package ars.srv.entity;
+package com.pc_builder.entity;
 
 import java.util.List;
 

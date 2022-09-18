@@ -1,4 +1,4 @@
-package ars.srv.repository;
+package com.pc_builder.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import ars.srv.entity.AuthRole;
+import com.pc_builder.entity.AuthRole;
 
 public interface AuthRoleRepository extends JpaRepository<AuthRole, Long> {
 

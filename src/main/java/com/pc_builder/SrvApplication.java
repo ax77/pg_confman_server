@@ -1,4 +1,4 @@
-package ars.srv;
+package com.pc_builder;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

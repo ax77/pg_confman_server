@@ -2,6 +2,7 @@ package com.pc_builder.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,15 +23,15 @@ public class AuthRoleResourcePrivilege {
 	@Column(name = "auth_role_resource_privilege_id")
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "auth_role_id", referencedColumnName = "auth_role_id", foreignKey = @ForeignKey(name = "fk_auth_role_id"), nullable = false)
 	private AuthRole role;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "auth_resource_id", referencedColumnName = "auth_resource_id", foreignKey = @ForeignKey(name = "fk_auth_resource_id"), nullable = false)
 	private AuthResource resource;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "auth_privilege_id", referencedColumnName = "auth_privilege_id", foreignKey = @ForeignKey(name = "fk_auth_privilege_id"), nullable = false)
 	private AuthPrivilege privilege;
 

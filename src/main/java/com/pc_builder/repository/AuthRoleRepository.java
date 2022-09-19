@@ -12,6 +12,7 @@ public interface AuthRoleRepository extends JpaRepository<AuthRole, Long> {
 
 	Optional<AuthRole> findById(Long id);
 	
+	@Query(value = "select r.auth_role_id, r.auth_role_name from auth_role r where r.auth_role_name = ?1", nativeQuery = true)
 	AuthRole findByName(String name);
 	
 	@Query(value = 

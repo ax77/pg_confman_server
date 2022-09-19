@@ -11,44 +11,26 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
+
 @Entity
 @Table(name = "auth_resource")
+@Data
 public class AuthResource {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "auth_resource_id")
 	private Long id;
 
-	@Column(name = "auth_resource_name")
+	@Column(name = "auth_resource_name", nullable = false)
 	@Size(max = 255)
 	private String name;
-	
+
 	@OneToMany(mappedBy = "resource")
+	@JsonIgnore
 	private List<AuthRoleResourcePrivilege> authRoleResourcePrivileges;
-
-	public AuthResource() {
-	}
-
-	public AuthResource(Long id, @Size(max = 255) String name) {
-		this.id = id;
-		this.name = name;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 }

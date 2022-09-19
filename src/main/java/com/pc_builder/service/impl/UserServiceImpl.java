@@ -10,15 +10,15 @@ import com.pc_builder.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private AuthUserRepository authUserRepository;
+    private AuthUserRepository authUserRepository;
 
-	@Autowired
-	public UserServiceImpl(AuthUserRepository authUserRepository) {
-		this.authUserRepository = authUserRepository;
-	}
+    @Autowired
+    public UserServiceImpl(AuthUserRepository authUserRepository) {
+        this.authUserRepository = authUserRepository;
+    }
 
-	@Override
-	public AuthUser getByName(String name) {
-		return this.authUserRepository.findByName(name);
-	}
+    @Override
+    public AuthUser getByName(String name) {
+        return this.authUserRepository.findByName(name);
+    }
 }

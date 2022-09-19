@@ -13,26 +13,26 @@ import com.pc_builder.service.RoleService;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-	private AuthRoleRepository roleRepository;
+    private AuthRoleRepository roleRepository;
 
-	@Autowired
-	public RoleServiceImpl(AuthRoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
-	}
+    @Autowired
+    public RoleServiceImpl(AuthRoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
-	@Override
-	public Optional<AuthRole> getById(Long id) {
-		return roleRepository.findById(id);
-	}
+    @Override
+    public Optional<AuthRole> getById(Long id) {
+        return roleRepository.findById(id);
+    }
 
-	@Override
-	public List<AuthRole> getRolesAvailableForUser(Long userId) {
-		return roleRepository.findRolesAvailableForUser(userId);
-	}
+    @Override
+    public List<AuthRole> getRolesAvailableForUser(Long userId) {
+        return roleRepository.findRolesAvailableForUser(userId);
+    }
 
-	@Override
-	public AuthRole getByName(String name) {
-		return roleRepository.findByName(name);
-	}
+    @Override
+    public AuthRole getByName(String name) {
+        return roleRepository.findByName(name);
+    }
 
 }

@@ -23,20 +23,20 @@ import lombok.Data;
 @Table(name = "auth_user")
 @Data
 public class AuthUser {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "auth_user_id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "auth_user_id")
+    private Long id;
 
-	@Column(name = "auth_user_name", nullable = false)
-	@Size(max = 255)
-	private String name;
+    @Column(name = "auth_user_name", nullable = false)
+    @Size(max = 255)
+    private String name;
 
-	@Column(name = "auth_user_pw", nullable = false)
-	@Size(max = 255)
-	private String password;
+    @Column(name = "auth_user_pw", nullable = false)
+    @Size(max = 255)
+    private String password;
 
-	//@formatter:off
+    //@formatter:off
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JsonIgnore
 	@JoinTable(name = "auth_user_has_roles"

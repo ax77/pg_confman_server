@@ -53,7 +53,7 @@ public class AuthController {
         this.tokenGenerator = tokenGenerator;
     }
 
-    @PostMapping("signin")
+    @PostMapping("login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authManager.authenticate(

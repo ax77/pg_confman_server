@@ -4,4 +4,6 @@ import com.pc_builder.entity.auth.AuthUser;
 
 public interface UserService {
     AuthUser getByName(String name);
+
+    AuthUser save(AuthUser user);
 }

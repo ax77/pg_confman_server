@@ -1,5 +1,8 @@
 package com.pc_builder.message.response;
 
+import lombok.Data;
+
+@Data
 public class JsonResponse {
 
     private String status;

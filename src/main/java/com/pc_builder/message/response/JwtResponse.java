@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
+
+@Data
 public class JwtResponse {
 	@JsonProperty("jwt_token")
 	private String token;

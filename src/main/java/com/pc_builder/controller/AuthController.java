@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import com.pc_builder.entity.auth.AuthRole;
 import com.pc_builder.entity.auth.AuthRoleResourcePrivilege;
 import com.pc_builder.entity.auth.AuthUser;
 import com.pc_builder.message.request.LoginRequest;
+import com.pc_builder.message.response.JsonResponse;
 import com.pc_builder.message.response.JwtResponse;
 import com.pc_builder.security.jwt.JwtTokenGenerator;
 import com.pc_builder.security.service.UserDetailsImpl;
@@ -36,7 +38,6 @@ import com.pc_builder.service.UserService;
 @CrossOrigin(origins = "*", maxAge = 7200)
 public class AuthController {
 
-	@SuppressWarnings("unused")
 	private RoleService roleService;
 
 	private UserService userService;
@@ -45,20 +46,23 @@ public class AuthController {
 
 	private JwtTokenGenerator tokenGenerator;
 
+	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	public AuthController(RoleService roleService, UserService userService, AuthenticationManager authManager,
-			JwtTokenGenerator tokenGenerator) {
+			JwtTokenGenerator tokenGenerator, PasswordEncoder passwordEncoder) {
 		this.roleService = roleService;
 		this.userService = userService;
 		this.authManager = authManager;
 		this.tokenGenerator = tokenGenerator;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest req) {
 
-		Authentication authentication = authManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		Authentication authentication = authManager
+				.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenGenerator.generateToken(authentication);
@@ -73,8 +77,24 @@ public class AuthController {
 
 		// TODO:
 		Date d = new Date(System.currentTimeMillis());
+		System.out.println(d);
 
 		return ResponseEntity.ok(new JwtResponse(jwt, id, username, roles, authorities, d));
+	}
+
+	@PostMapping("register")
+	public ResponseEntity<?> registerNewUser(@Valid @RequestBody LoginRequest req) {
+		// TODO: guards
+
+		AuthUser user = new AuthUser(req.getUsername(), passwordEncoder.encode(req.getPassword()));
+
+		List<AuthRole> roles = new ArrayList<>();
+		roles.add(roleService.getByName("ROLE_USER"));
+
+		user.setRoles(roles);
+		userService.save(user);
+
+		return ResponseEntity.ok(new JsonResponse("ok", user));
 	}
 
 	// We have to build that kind of authorities.

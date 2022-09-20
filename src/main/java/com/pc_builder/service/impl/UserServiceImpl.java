@@ -21,4 +21,9 @@ public class UserServiceImpl implements UserService {
     public AuthUser getByName(String name) {
         return this.authUserRepository.findByName(name);
     }
+
+	@Override
+	public AuthUser save(AuthUser user) {
+		return authUserRepository.save(user);
+	}
 }

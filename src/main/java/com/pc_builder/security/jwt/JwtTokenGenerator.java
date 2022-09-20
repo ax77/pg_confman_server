@@ -15,36 +15,40 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtTokenGenerator {
 
-    @Value("${jwt.token.secret}")
-    private String secret;
+	@Value("${jwt.token.secret}")
+	private String secret;
 
-    @Value("${jwt.token.expired}")
-    private int expired;
+	@Value("${jwt.token.expired}")
+	private int expired;
 
-    public String generateToken(Authentication auth) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+	public String generateToken(Authentication auth) {
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 
-        JwtBuilder builder = Jwts.builder();
-        builder.setSubject(userDetails.getName());
-        builder.setIssuedAt(new Date());
-        builder.setExpiration(new Date(new Date().getTime() + expired));
-        builder.signWith(SignatureAlgorithm.HS512, secret);
+		JwtBuilder builder = Jwts.builder();
+		builder.setSubject(userDetails.getName());
+		builder.setIssuedAt(new Date());
+		builder.setExpiration(new Date(new Date().getTime() + expired));
+		builder.signWith(SignatureAlgorithm.HS512, secret);
 
-        return builder.compact();
-    }
+		return builder.compact();
+	}
 
-    public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
-    }
+	public String getUsernameFromToken(String token) {
+		return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
+	}
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJwt(token);
-            return true;
-        } catch (Exception e) {
-            // TODO: LOGGING
-            System.out.println(e.toString());
-        }
-        return false;
-    }
+	public Date getExpiresDataFromToken(String token) {
+		return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getExpiration();
+	}
+
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parser().setSigningKey(secret).parseClaimsJwt(token);
+			return true;
+		} catch (Exception e) {
+			// TODO: LOGGING
+			System.out.println(e.toString());
+		}
+		return false;
+	}
 }

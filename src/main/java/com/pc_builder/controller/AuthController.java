@@ -1,6 +1,7 @@
 package com.pc_builder.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,76 +36,80 @@ import com.pc_builder.service.UserService;
 @CrossOrigin(origins = "*", maxAge = 7200)
 public class AuthController {
 
-    @SuppressWarnings("unused")
-    private RoleService roleService;
-    
-    private UserService userService;
+	@SuppressWarnings("unused")
+	private RoleService roleService;
 
-    private AuthenticationManager authManager;
-    
-    private JwtTokenGenerator tokenGenerator;
+	private UserService userService;
 
-    @Autowired
-    public AuthController(RoleService roleService, UserService userService, AuthenticationManager authManager,
-            JwtTokenGenerator tokenGenerator) {
-        this.roleService = roleService;
-        this.userService = userService;
-        this.authManager = authManager;
-        this.tokenGenerator = tokenGenerator;
-    }
+	private AuthenticationManager authManager;
 
-    @PostMapping("login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	private JwtTokenGenerator tokenGenerator;
 
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+	@Autowired
+	public AuthController(RoleService roleService, UserService userService, AuthenticationManager authManager,
+			JwtTokenGenerator tokenGenerator) {
+		this.roleService = roleService;
+		this.userService = userService;
+		this.authManager = authManager;
+		this.tokenGenerator = tokenGenerator;
+	}
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenGenerator.generateToken(authentication);
+	@PostMapping("login")
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> authorities = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+		Authentication authentication = authManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        List<String> roles = userDetails.getRoles();
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = tokenGenerator.generateToken(authentication);
 
-        return ResponseEntity
-                .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles, authorities));
-    }
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-    // We have to build that kind of authorities.
-    //
-    // [
-    // "DOCUMENT_SHOW",
-    // "DOCUMENT_DELETE",
-    // "DOCUMENT_CREATE",
-    // "DOCUMENT_EDIT",
-    // "DOCUMENT_INDEX",
-    //
-    // "PROFESSION_SHOW",
-    // "PROFESSION_DELETE",
-    // "PROFESSION_CREATE",
-    // "PROFESSION_EDIT",
-    // "PROFESSION_INDEX",
-    //
-    // "PERMISSION_SHOW",
-    // "PERMISSION_DELETE",
-    // "PERMISSION_CREATE",
-    // "PERMISSION_EDIT",
-    // "PERMISSION_INDEX"
-    // ]
+		Long id = userDetails.getId();
+		String username = userDetails.getUsername();
+		List<String> roles = userDetails.getRoles();
+		List<String> authorities = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+				.collect(Collectors.toList());
 
-    @GetMapping("users")
-    public ResponseEntity<?> getUsers() {
-        AuthUser user = userService.getByName("admin");
-        List<String> result = new ArrayList<>();
-        for (AuthRole role : user.getRoles()) {
-            for (AuthRoleResourcePrivilege rrp : role.getAuthRoleResourcePrivileges()) {
-                String authority = rrp.getResource().getName() + "_" + rrp.getPrivilege().getName();
-                result.add(authority.toUpperCase());
-            }
-        }
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+		// TODO:
+		Date d = new Date(System.currentTimeMillis());
+
+		return ResponseEntity.ok(new JwtResponse(jwt, id, username, roles, authorities, d));
+	}
+
+	// We have to build that kind of authorities.
+	//
+	// [
+	// "DOCUMENT_SHOW",
+	// "DOCUMENT_DELETE",
+	// "DOCUMENT_CREATE",
+	// "DOCUMENT_EDIT",
+	// "DOCUMENT_INDEX",
+	//
+	// "PROFESSION_SHOW",
+	// "PROFESSION_DELETE",
+	// "PROFESSION_CREATE",
+	// "PROFESSION_EDIT",
+	// "PROFESSION_INDEX",
+	//
+	// "PERMISSION_SHOW",
+	// "PERMISSION_DELETE",
+	// "PERMISSION_CREATE",
+	// "PERMISSION_EDIT",
+	// "PERMISSION_INDEX"
+	// ]
+
+	@GetMapping("users")
+	public ResponseEntity<?> getUsers() {
+		AuthUser user = userService.getByName("admin");
+		List<String> result = new ArrayList<>();
+		for (AuthRole role : user.getRoles()) {
+			for (AuthRoleResourcePrivilege rrp : role.getAuthRoleResourcePrivileges()) {
+				String authority = rrp.getResource().getName() + "_" + rrp.getPrivilege().getName();
+				result.add(authority.toUpperCase());
+			}
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
 }

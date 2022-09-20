@@ -1,4 +1,4 @@
-package com.pc_builder.entity;
+package com.pc_builder.entity.auth;
 
 import java.util.List;
 
@@ -17,20 +17,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Entity
-@Table(name = "auth_resource")
+@Table(name = "auth_role")
 @Data
-public class AuthResource {
+public class AuthRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "auth_resource_id")
+    @Column(name = "auth_role_id")
     private Long id;
 
-    @Column(name = "auth_resource_name", nullable = false)
+    @Column(name = "auth_role_name", nullable = false)
     @Size(max = 255)
     private String name;
 
-    @OneToMany(mappedBy = "resource", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<AuthRoleResourcePrivilege> authRoleResourcePrivileges;
 

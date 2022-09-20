@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.pc_builder.entity.AuthRole;
+import com.pc_builder.entity.auth.AuthRole;
 
 public interface AuthRoleRepository extends JpaRepository<AuthRole, Long> {
 

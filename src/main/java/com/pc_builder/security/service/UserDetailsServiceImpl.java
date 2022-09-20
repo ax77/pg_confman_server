@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.pc_builder.entity.AuthUser;
+import com.pc_builder.entity.auth.AuthUser;
 import com.pc_builder.repository.AuthUserRepository;
 
 @Service

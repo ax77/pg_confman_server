@@ -9,9 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pc_builder.entity.AuthRole;
-import com.pc_builder.entity.AuthRoleResourcePrivilege;
-import com.pc_builder.entity.AuthUser;
+import com.pc_builder.entity.auth.AuthRole;
+import com.pc_builder.entity.auth.AuthRoleResourcePrivilege;
+import com.pc_builder.entity.auth.AuthUser;
 
 public class UserDetailsImpl implements UserDetails {
 

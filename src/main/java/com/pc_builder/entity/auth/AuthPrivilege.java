@@ -1,4 +1,4 @@
-package com.pc_builder.entity;
+package com.pc_builder.entity.auth;
 
 import java.util.List;
 

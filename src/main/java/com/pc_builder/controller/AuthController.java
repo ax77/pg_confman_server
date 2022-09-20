@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pc_builder.entity.AuthRole;
-import com.pc_builder.entity.AuthRoleResourcePrivilege;
-import com.pc_builder.entity.AuthUser;
+import com.pc_builder.entity.auth.AuthRole;
+import com.pc_builder.entity.auth.AuthRoleResourcePrivilege;
+import com.pc_builder.entity.auth.AuthUser;
 import com.pc_builder.message.request.LoginRequest;
 import com.pc_builder.message.response.JwtResponse;
 import com.pc_builder.security.jwt.JwtTokenGenerator;

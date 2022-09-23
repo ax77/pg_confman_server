@@ -37,7 +37,6 @@ public class AuthUser {
 
 	//@formatter:off
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JsonIgnore
 	@JoinTable(name = "auth_user_has_roles"
 		, joinColumns 	     = { @JoinColumn(name = "auth_user_id") }
 		, inverseJoinColumns = { @JoinColumn(name = "auth_role_id") }

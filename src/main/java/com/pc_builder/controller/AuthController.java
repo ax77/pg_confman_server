@@ -121,15 +121,7 @@ public class AuthController {
 
 	@GetMapping("users")
 	public ResponseEntity<?> getUsers() {
-		AuthUser user = userService.getByName("admin");
-		List<String> result = new ArrayList<>();
-		for (AuthRole role : user.getRoles()) {
-			for (AuthRoleResourcePrivilege rrp : role.getAuthRoleResourcePrivileges()) {
-				String authority = rrp.getResource().getName() + "_" + rrp.getPrivilege().getName();
-				result.add(authority.toUpperCase());
-			}
-		}
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
 	}
 
 }

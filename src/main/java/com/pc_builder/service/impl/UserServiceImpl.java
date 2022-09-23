@@ -1,5 +1,7 @@
 package com.pc_builder.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +27,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public AuthUser save(AuthUser user) {
 		return authUserRepository.save(user);
+	}
+
+	@Override
+	public List<AuthUser> getAll() {
+		return authUserRepository.findAll();
 	}
 }

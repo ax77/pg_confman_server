@@ -5,30 +5,30 @@ import lombok.Data;
 @Data
 public class JsonResponse {
 
-    private String status;
-    private Object result;
+	private String status;
+	private Object result;
 
-    public JsonResponse() {
-    }
+	public JsonResponse() {
+	}
 
-    public JsonResponse(String status, Object result) {
-        this.status = status;
-        this.result = result;
-    }
+	public JsonResponse(String status, Object result) {
+		this.status = status;
+		this.result = result;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Object getResult() {
-        return result;
-    }
+	public Object getResult() {
+		return result;
+	}
 
-    public void setResult(Object result) {
-        this.result = result;
-    }
+	public void setResult(Object result) {
+		this.result = result;
+	}
 }

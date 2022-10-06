@@ -21,17 +21,17 @@ import lombok.Data;
 @Data
 public class AuthRole {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "auth_role_id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "auth_role_id")
+	private Long id;
 
-    @Column(name = "auth_role_name", nullable = false)
-    @Size(max = 255)
-    private String name;
+	@Column(name = "auth_role_name", nullable = false)
+	@Size(max = 255)
+	private String name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<AuthRoleResourcePrivilege> authRoleResourcePrivileges;
+	@OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+	@JsonIgnore
+	private List<AuthRoleResourcePrivilege> authRoleResourcePrivileges;
 
 }

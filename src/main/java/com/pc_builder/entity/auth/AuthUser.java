@@ -15,10 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.Data;
-
 @Entity
 @Table(name = "auth_user")
 public class AuthUser {

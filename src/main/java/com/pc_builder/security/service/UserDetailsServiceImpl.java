@@ -9,26 +9,26 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.pc_builder.entity.auth.AuthUser;
-import com.pc_builder.repository.AuthUserRepository;
+import com.pc_builder.repository.auth.AuthUserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private AuthUserRepository userRepository;
+	private AuthUserRepository userRepository;
 
-    @Autowired
-    public UserDetailsServiceImpl(AuthUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	@Autowired
+	public UserDetailsServiceImpl(AuthUserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AuthUser user = userRepository.findByName(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + username + " is not exists");
-        }
-        return UserDetailsImpl.buildUserDetailsImplFromAuthUser(user);
-    }
+	@Override
+	@Transactional
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		AuthUser user = userRepository.findByName(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("User " + username + " is not exists");
+		}
+		return UserDetailsImpl.buildUserDetailsImplFromAuthUser(user);
+	}
 
 }

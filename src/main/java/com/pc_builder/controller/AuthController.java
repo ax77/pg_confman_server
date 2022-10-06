@@ -23,15 +23,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pc_builder.entity.auth.AuthRole;
-import com.pc_builder.entity.auth.AuthRoleResourcePrivilege;
 import com.pc_builder.entity.auth.AuthUser;
 import com.pc_builder.message.request.LoginRequest;
 import com.pc_builder.message.response.JsonResponse;
 import com.pc_builder.message.response.JwtResponse;
 import com.pc_builder.security.jwt.JwtTokenGenerator;
 import com.pc_builder.security.service.UserDetailsImpl;
-import com.pc_builder.service.RoleService;
-import com.pc_builder.service.UserService;
+import com.pc_builder.service.auth.RoleService;
+import com.pc_builder.service.auth.UserService;
 
 @RestController
 @RequestMapping("/api/v1/auth/")

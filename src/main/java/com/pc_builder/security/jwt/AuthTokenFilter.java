@@ -18,43 +18,43 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.pc_builder.security.service.UserDetailsServiceImpl;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtTokenGenerator tokenGenerator;
+	@Autowired
+	private JwtTokenGenerator tokenGenerator;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        try {
-            String jwt = parseJwt(request);
-            if (jwt != null && tokenGenerator.validateToken(jwt)) {
-                String username = tokenGenerator.getUsernameFromToken(jwt);
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		try {
+			String jwt = parseJwt(request);
+			if (jwt != null && tokenGenerator.validateToken(jwt)) {
+				String username = tokenGenerator.getUsernameFromToken(jwt);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception e) {
-            // TODO: LOGGING
-            System.out.println(e.toString());
-        }
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
+		} catch (Exception e) {
+			// TODO: LOGGING
+			System.out.println(e.toString());
+		}
 
-        filterChain.doFilter(request, response);
-    }
+		filterChain.doFilter(request, response);
+	}
 
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
+	private String parseJwt(HttpServletRequest request) {
+		String headerAuth = request.getHeader("Authorization");
 
-        // TODO: read the documentation carefully, and use this properly
-        if (StringUtils.hasText(headerAuth) && (headerAuth.startsWith("Bearer ") || headerAuth.startsWith("Bearer_"))) {
-            return headerAuth.substring(7, headerAuth.length());
-        }
+		// TODO: read the documentation carefully, and use this properly
+		if (StringUtils.hasText(headerAuth) && (headerAuth.startsWith("Bearer ") || headerAuth.startsWith("Bearer_"))) {
+			return headerAuth.substring(7, headerAuth.length());
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

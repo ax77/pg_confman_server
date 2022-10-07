@@ -1,4 +1,4 @@
-package com.pc_builder.message.request;
+package com.pc_builder.payload.request;
 
 import javax.validation.constraints.NotBlank;
 

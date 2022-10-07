@@ -1,4 +1,4 @@
-package com.pc_builder.message.response;
+package com.pc_builder.payload.response;
 
 import java.util.Date;
 import java.util.List;

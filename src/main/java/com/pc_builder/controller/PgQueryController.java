@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pc_builder.entity.pgquery.PgQueryResult;
-import com.pc_builder.message.request.PgQueryRequest;
-import com.pc_builder.message.response.JsonResponse;
+import com.pc_builder.payload.request.PgQueryRequest;
+import com.pc_builder.payload.response.JsonResponse;
+import com.pc_builder.payload.response.PgQueryResult;
 import com.pc_builder.service.pgquery.PgQueryService;
 
 @RestController
@@ -28,7 +28,7 @@ public class PgQueryController {
 	}
 
 	@PostMapping("execute")
-	public ResponseEntity<?> saveEmployee(@Valid @RequestBody PgQueryRequest req) {
+	public ResponseEntity<?> executeQuery(@Valid @RequestBody PgQueryRequest req) {
 		PgQueryResult row = pgService.execQuery(req.getQuery());
 		return ResponseEntity.ok(new JsonResponse("ok", row));
 	}

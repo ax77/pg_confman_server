@@ -1,6 +1,6 @@
 package com.pc_builder.repository.pgquery;
 
-import com.pc_builder.entity.pgquery.PgQueryResult;
+import com.pc_builder.payload.response.PgQueryResult;
 
 public interface PgQueryRepository {
 

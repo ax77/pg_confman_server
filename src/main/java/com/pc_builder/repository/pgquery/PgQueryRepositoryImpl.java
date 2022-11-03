@@ -53,9 +53,6 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 		private static final long serialVersionUID = 5567160849202441039L;
 		String settingName;
 
-		public PgSettingsEntry() {
-		}
-
 		public PgSettingsEntry(String settingName) {
 			this.settingName = settingName;
 		}
@@ -74,23 +71,35 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 		private static final long serialVersionUID = 8983180789548524629L;
 
 		String title;
+		String id;
 		List<PgSettingsEntry> settings;
 		List<PgSettingsDto> children;
 
 		public PgSettingsDto(String title) {
 			this.title = title;
+			this.id = makeId(title);
 			this.settings = new ArrayList<>();
 			this.children = new ArrayList<>();
 		}
 
-		public PgSettingsDto() {
-			this.title = "";
-			this.settings = new ArrayList<>();
-			this.children = new ArrayList<>();
+		private String makeId(String title) {
+			String id = new String(title);
+			id = id.replaceAll(" ", "_");
+			id = id.replaceAll("-", "_");
+			id = "sect_" + id;
+			return id.toLowerCase();
 		}
 
 		public String getTitle() {
 			return title;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
 		}
 
 		public void setTitle(String title) {

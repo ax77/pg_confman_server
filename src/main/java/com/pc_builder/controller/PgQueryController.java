@@ -34,8 +34,8 @@ public class PgQueryController {
 	}
 
 	@PostMapping("settings")
-	public ResponseEntity<?> settings() {
-		return ResponseEntity.ok(pgService.pgSettings());
+	public JsonResponse settings() {
+		return pgService.pgSettings();
 	}
 
 }

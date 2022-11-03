@@ -1,6 +1,7 @@
 package com.pc_builder.repository.pgquery;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Repository;
 
 import com.pc_builder.payload.response.JsonResponse;
 import com.pc_builder.payload.response.PgQueryResult;
+import com.pc_builder.util.DocsReader;
+import com.pc_builder.util.PgSettingDocs;
 
 @Repository
 public class PgQueryRepositoryImpl implements PgQueryRepository {
@@ -53,10 +56,12 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 		private static final long serialVersionUID = 5567160849202441039L;
 		String settingName;
 		String settingValue;
+		List<String> enDocs;
 
 		public PgSettingsEntry(String settingName, String settingValue) {
 			this.settingName = settingName;
 			this.settingValue = settingValue;
+			this.enDocs = new ArrayList<>();
 		}
 
 		public String getSettingValue() {
@@ -73,6 +78,18 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 		public void setSettingName(String settingName) {
 			this.settingName = settingName;
+		}
+
+		public List<String> getEnDocs() {
+			return enDocs;
+		}
+
+		public void setEnDocs(List<String> enDocs) {
+			this.enDocs = enDocs;
+		}
+
+		public void addEnDocs(String e) {
+			this.enDocs.add(e);
 		}
 
 		@Override
@@ -166,7 +183,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 	private StringBuilder queryForFlatCategory(String forCategoryLike) {
 		StringBuilder query = new StringBuilder();
-		query.append("select name, setting\n");
+		query.append("select name, setting, short_desc\n");
 		query.append("from pg_settings\n");
 		query.append("where category like '" + forCategoryLike + "%'\n");
 		query.append("order by 1;\n");
@@ -175,7 +192,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 	private StringBuilder queryForSubcategories(String lhs, String rhs) {
 		StringBuilder query = new StringBuilder();
-		query.append("select name, setting\n");
+		query.append("select name, setting, short_desc\n");
 		query.append("from pg_settings\n");
 		query.append("where   category like '" + lhs + "%' \n");
 		query.append("    and category like '%" + rhs + "'\n");
@@ -191,6 +208,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 		List<Map<String, Object>> q = jdbcTemplate.queryForList(query.toString());
 		for (Map<String, Object> m : q) {
 			PgSettingsEntry en = new PgSettingsEntry(m.get("name").toString(), m.get("setting").toString());
+			en.addEnDocs(m.get("short_desc").toString());
 			result.add(en);
 		}
 
@@ -230,6 +248,37 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 				}
 			}
 		}
+
+		// TODO: simplify, rewrite, test, clean
+		try {
+			List<PgSettingDocs> flat = new DocsReader().parseDocs();
+			for (PgSettingDocs doc : flat) {
+				for (PgSettingsDto dto : settings) {
+					if (dto.children.size() > 0) {
+						for (PgSettingsDto e : dto.getChildren()) {
+							for (PgSettingsEntry ent : e.getSettings()) {
+								if (ent.settingName.equals(doc.getSettingName())) {
+									for (String oneDocEnt : doc.getSettingDesc()) {
+										ent.addEnDocs(oneDocEnt);
+									}
+								}
+							}
+						}
+					} else {
+						for (PgSettingsEntry ent : dto.getSettings()) {
+							if (ent.settingName.equals(doc.getSettingName())) {
+								for (String oneDocEnt : doc.getSettingDesc()) {
+									ent.addEnDocs(oneDocEnt);
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return new JsonResponse("ok", settings);
 	}
 

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>20.12. Lock Management</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"/></head><body><div class="sect1"><div class="titlepage"><div><div><h1 class="title"><a id="runtime-config-locks"/>20.12. Lock Management</h1></div></div></div><div class="variablelist"><dl class="variablelist"><dt><a id="guc-deadlock-timeout"/><span class="term"><code class="varname">deadlock_timeout</code> (<code class="type">integer</code>)
+      <a id="id-1.6.7.15.2.1.1.3" class="indexterm"/>
+      <a id="id-1.6.7.15.2.1.1.4" class="indexterm"/>
+      <a id="id-1.6.7.15.2.1.1.5" class="indexterm"/>
+      </span></dt><dd><p>
+        This is the amount of time to wait on a lock
+        before checking to see if there is a deadlock condition. The
+        check for deadlock is relatively expensive, so the server doesn't run
+        it every time it waits for a lock. We optimistically assume
+        that deadlocks are not common in production applications and
+        just wait on the lock for a while before checking for a
+        deadlock. Increasing this value reduces the amount of time
+        wasted in needless deadlock checks, but slows down reporting of
+        real deadlock errors.
+        If this value is specified without units, it is taken as milliseconds.
+        The default is one second (<code class="literal">1s</code>),
+        which is probably about the smallest value you would want in
+        practice. On a heavily loaded server you might want to raise it.
+        Ideally the setting should exceed your typical transaction time,
+        so as to improve the odds that a lock will be released before
+        the waiter decides to check for deadlock.
+        Only superusers and users with the appropriate <code class="literal">SET</code>
+        privilege can change this setting.
+       </p><p>
+        When <a class="xref" href="ch20s08.html#guc-log-lock-waits">log_lock_waits</a> is set,
+        this parameter also determines the amount of time to wait before
+        a log message is issued about the lock wait.  If you are trying
+        to investigate locking delays you might want to set a shorter than
+        normal <code class="varname">deadlock_timeout</code>.
+       </p></dd><dt><a id="guc-max-locks-per-transaction"/><span class="term"><code class="varname">max_locks_per_transaction</code> (<code class="type">integer</code>)
+      <a id="id-1.6.7.15.2.2.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+        The shared lock table tracks locks on
+        <code class="varname">max_locks_per_transaction</code> * (<a class="xref" href="ch20s03.html#guc-max-connections">max_connections</a> + <a class="xref" href="ch20s04.html#guc-max-prepared-transactions">max_prepared_transactions</a>) objects (e.g.,  tables);
+        hence, no more than this many distinct objects can be locked at
+        any one time.  This parameter controls the average number of object
+        locks allocated for each transaction;  individual transactions
+        can lock more objects as long as the locks of all transactions
+        fit in the lock table.  This is <span class="emphasis"><em>not</em></span> the number of
+        rows that can be locked; that value is unlimited.  The default,
+        64, has historically proven sufficient, but you might need to
+        raise this value if you have queries that touch many different
+        tables in a single transaction, e.g., query of a parent table with
+        many children.  This parameter can only be set at server start.
+       </p><p>
+        When running a standby server, you must set this parameter to the
+        same or higher value than on the primary server. Otherwise, queries
+        will not be allowed in the standby server.
+       </p></dd><dt><a id="guc-max-pred-locks-per-transaction"/><span class="term"><code class="varname">max_pred_locks_per_transaction</code> (<code class="type">integer</code>)
+      <a id="id-1.6.7.15.2.3.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+        The shared predicate lock table tracks locks on
+        <code class="varname">max_pred_locks_per_transaction</code> * (<a class="xref" href="ch20s03.html#guc-max-connections">max_connections</a> + <a class="xref" href="ch20s04.html#guc-max-prepared-transactions">max_prepared_transactions</a>) objects (e.g., tables);
+        hence, no more than this many distinct objects can be locked at
+        any one time.  This parameter controls the average number of object
+        locks allocated for each transaction;  individual transactions
+        can lock more objects as long as the locks of all transactions
+        fit in the lock table.  This is <span class="emphasis"><em>not</em></span> the number of
+        rows that can be locked; that value is unlimited.  The default,
+        64, has generally been sufficient in testing, but you might need to
+        raise this value if you have clients that touch many different
+        tables in a single serializable transaction. This parameter can
+        only be set at server start.
+       </p></dd><dt><a id="guc-max-pred-locks-per-relation"/><span class="term"><code class="varname">max_pred_locks_per_relation</code> (<code class="type">integer</code>)
+      <a id="id-1.6.7.15.2.4.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+        This controls how many pages or tuples of a single relation can be
+        predicate-locked before the lock is promoted to covering the whole
+        relation.  Values greater than or equal to zero mean an absolute
+        limit, while negative values
+        mean <a class="xref" href="ch20s12.html#guc-max-pred-locks-per-transaction">max_pred_locks_per_transaction</a> divided by
+        the absolute value of this setting.  The default is -2, which keeps
+        the behavior from previous versions of <span class="productname">PostgreSQL</span>.
+        This parameter can only be set in the <code class="filename">postgresql.conf</code>
+        file or on the server command line.
+       </p></dd><dt><a id="guc-max-pred-locks-per-page"/><span class="term"><code class="varname">max_pred_locks_per_page</code> (<code class="type">integer</code>)
+      <a id="id-1.6.7.15.2.5.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+        This controls how many rows on a single page can be predicate-locked
+        before the lock is promoted to covering the whole page.  The default
+        is 2.  This parameter can only be set in
+        the <code class="filename">postgresql.conf</code> file or on the server command line.
+       </p></dd></dl></div></div></body></html>

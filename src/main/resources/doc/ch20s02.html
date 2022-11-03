@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>20.2. File Locations</title><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"/></head><body><div class="sect1"><div class="titlepage"><div><div><h1 class="title"><a id="runtime-config-file-locations"/>20.2. File Locations</h1></div></div></div><p>
+      In addition to the <code class="filename">postgresql.conf</code> file
+      already mentioned, <span class="productname">PostgreSQL</span> uses
+      two other manually-edited configuration files, which control
+      client authentication (their use is discussed in <a class="xref" href="ch21.html" title="Chapter 21. Client Authentication">Chapter 21</a>).  By default, all three
+      configuration files are stored in the database cluster's data
+      directory.  The parameters described in this section allow the
+      configuration files to be placed elsewhere.  (Doing so can ease
+      administration.  In particular it is often easier to ensure that
+      the configuration files are properly backed-up when they are
+      kept separate.)
+     </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-data-directory"/><span class="term"><code class="varname">data_directory</code> (<code class="type">string</code>)
+      <a id="id-1.6.7.5.3.1.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+         Specifies the directory to use for data storage.
+         This parameter can only be set at server start.
+       </p></dd><dt><a id="guc-config-file"/><span class="term"><code class="varname">config_file</code> (<code class="type">string</code>)
+      <a id="id-1.6.7.5.3.2.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+         Specifies the main server configuration file
+         (customarily called <code class="filename">postgresql.conf</code>).
+         This parameter can only be set on the <span class="command"><strong>postgres</strong></span> command line.
+       </p></dd><dt><a id="guc-hba-file"/><span class="term"><code class="varname">hba_file</code> (<code class="type">string</code>)
+      <a id="id-1.6.7.5.3.3.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+         Specifies the configuration file for host-based authentication
+         (customarily called <code class="filename">pg_hba.conf</code>).
+         This parameter can only be set at server start.
+       </p></dd><dt><a id="guc-ident-file"/><span class="term"><code class="varname">ident_file</code> (<code class="type">string</code>)
+      <a id="id-1.6.7.5.3.4.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+         Specifies the configuration file for user name mapping
+         (customarily called <code class="filename">pg_ident.conf</code>).
+         This parameter can only be set at server start.
+         See also <a class="xref" href="ch21s02.html" title="21.2. User Name Maps">Section 21.2</a>.
+       </p></dd><dt><a id="guc-external-pid-file"/><span class="term"><code class="varname">external_pid_file</code> (<code class="type">string</code>)
+      <a id="id-1.6.7.5.3.5.1.3" class="indexterm"/>
+      </span></dt><dd><p>
+        Specifies the name of an additional process-ID (PID) file that the
+        server should create for use by server administration programs.
+        This parameter can only be set at server start.
+       </p></dd></dl></div><p>
+      In a default installation, none of the above parameters are set
+      explicitly.  Instead, the
+      data directory is specified by the <code class="option">-D</code> command-line
+      option or the <code class="envar">PGDATA</code> environment variable, and the
+      configuration files are all found within the data directory.
+     </p><p>
+      If you wish to keep the configuration files elsewhere than the
+      data directory, the <span class="command"><strong>postgres</strong></span> <code class="option">-D</code>
+      command-line option or <code class="envar">PGDATA</code> environment variable
+      must point to the directory containing the configuration files,
+      and the <code class="varname">data_directory</code> parameter must be set in
+      <code class="filename">postgresql.conf</code> (or on the command line) to show
+      where the data directory is actually located.  Notice that
+      <code class="varname">data_directory</code> overrides <code class="option">-D</code> and
+      <code class="envar">PGDATA</code> for the location
+      of the data directory, but not for the location of the configuration
+      files.
+     </p><p>
+      If you wish, you can specify the configuration file names and locations
+      individually using the parameters <code class="varname">config_file</code>,
+      <code class="varname">hba_file</code> and/or <code class="varname">ident_file</code>.
+      <code class="varname">config_file</code> can only be specified on the
+      <span class="command"><strong>postgres</strong></span> command line, but the others can be
+      set within the main configuration file.  If all three parameters plus
+      <code class="varname">data_directory</code> are explicitly set, then it is not necessary
+      to specify <code class="option">-D</code> or <code class="envar">PGDATA</code>.
+     </p><p>
+      When setting any of these parameters, a relative path will be interpreted
+      with respect to the directory in which <span class="command"><strong>postgres</strong></span>
+      is started.
+     </p></div></body></html>

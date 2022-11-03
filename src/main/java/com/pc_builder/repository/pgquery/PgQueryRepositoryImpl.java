@@ -52,9 +52,19 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 	class PgSettingsEntry implements Serializable {
 		private static final long serialVersionUID = 5567160849202441039L;
 		String settingName;
+		String settingValue;
 
-		public PgSettingsEntry(String settingName) {
+		public PgSettingsEntry(String settingName, String settingValue) {
 			this.settingName = settingName;
+			this.settingValue = settingValue;
+		}
+
+		public String getSettingValue() {
+			return settingValue;
+		}
+
+		public void setSettingValue(String settingValue) {
+			this.settingValue = settingValue;
 		}
 
 		public String getSettingName() {
@@ -63,6 +73,11 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 		public void setSettingName(String settingName) {
 			this.settingName = settingName;
+		}
+
+		@Override
+		public String toString() {
+			return "PgSettingsEntry [settingName=" + settingName + ", settingValue=" + settingValue + "]";
 		}
 
 	}
@@ -86,7 +101,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 			String id = new String(title);
 			id = id.replaceAll(" ", "_");
 			id = id.replaceAll("-", "_");
-			id = "sect_" + id;
+			id = id.replaceAll(".", "_");
 			return id.toLowerCase();
 		}
 
@@ -151,7 +166,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 	private StringBuilder queryForFlatCategory(String forCategoryLike) {
 		StringBuilder query = new StringBuilder();
-		query.append("select name\n");
+		query.append("select name, setting\n");
 		query.append("from pg_settings\n");
 		query.append("where category like '" + forCategoryLike + "%'\n");
 		query.append("order by 1;\n");
@@ -160,7 +175,7 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 	private StringBuilder queryForSubcategories(String lhs, String rhs) {
 		StringBuilder query = new StringBuilder();
-		query.append("select name\n");
+		query.append("select name, setting\n");
 		query.append("from pg_settings\n");
 		query.append("where   category like '" + lhs + "%' \n");
 		query.append("    and category like '%" + rhs + "'\n");
@@ -175,10 +190,8 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
 
 		List<Map<String, Object>> q = jdbcTemplate.queryForList(query.toString());
 		for (Map<String, Object> m : q) {
-			for (Entry<String, Object> e : m.entrySet()) {
-				PgSettingsEntry en = new PgSettingsEntry(e.getValue().toString());
-				result.add(en);
-			}
+			PgSettingsEntry en = new PgSettingsEntry(m.get("name").toString(), m.get("setting").toString());
+			result.add(en);
 		}
 
 		return result;

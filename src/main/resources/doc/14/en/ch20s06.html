@@ -54,8 +54,8 @@
          effectively limiting how many logical replication subscriptions can
          be created on the server. Setting it to a lower value than the current
          number of tracked replication origins (reflected in
-         <a class="link" href="ch54s18.html" title="54.18. pg_replication_origin_status">pg_replication_origin_status</a>,
-         not <a class="link" href="ch53s44.html" title="53.44. pg_replication_origin">pg_replication_origin</a>)
+         <a class="link" href="ch52s80.html" title="52.80. pg_replication_origin_status">pg_replication_origin_status</a>,
+         not <a class="link" href="ch52s42.html" title="52.42. pg_replication_origin">pg_replication_origin</a>)
          will prevent the server from starting.
         </p></dd><dt><a id="guc-wal-keep-size"/><span class="term"><code class="varname">wal_keep_size</code> (<code class="type">integer</code>)
        <a id="id-1.6.7.9.3.3.3.1.3" class="indexterm"/>
@@ -96,10 +96,7 @@
         than the given size, the standby using the slot may no longer be able
         to continue replication due to removal of required WAL files. You
         can see the WAL availability of replication slots
-        in <a class="link" href="ch54s19.html" title="54.19. pg_replication_slots">pg_replication_slots</a>.
-        If this value is specified without units, it is taken as megabytes.
-        This parameter can only be set in the <code class="filename">postgresql.conf</code>
-        file or on the server command line.
+        in <a class="link" href="ch52s81.html" title="52.81. pg_replication_slots">pg_replication_slots</a>.
        </p></dd><dt><a id="guc-wal-sender-timeout"/><span class="term"><code class="varname">wal_sender_timeout</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.9.3.3.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
@@ -243,8 +240,7 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
       <a id="id-1.6.7.9.4.3.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Specifies the number of transactions by which <span class="command"><strong>VACUUM</strong></span> and
-        <a class="link" href="ch73s07.html" title="73.7. Heap-Only Tuples (HOT)"><acronym class="acronym">HOT</acronym> updates</a>
-        will defer cleanup of dead row versions. The
+        <acronym class="acronym">HOT</acronym> updates will defer cleanup of dead row versions. The
         default is zero transactions, meaning that dead row versions can be
         removed as soon as possible, that is, as soon as they are no longer
         visible to any open transaction.  You may wish to set this to a
@@ -335,7 +331,7 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
        </p></dd><dt><a id="guc-max-standby-archive-delay"/><span class="term"><code class="varname">max_standby_archive_delay</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.9.5.3.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        When hot standby is active, this parameter determines how long the
+        When Hot Standby is active, this parameter determines how long the
         standby server should wait before canceling standby queries that
         conflict with about-to-be-applied WAL entries, as described in
         <a class="xref" href="ch27s04.html#hot-standby-conflict" title="27.4.2. Handling Query Conflicts">Section 27.4.2</a>.
@@ -357,7 +353,7 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
        </p></dd><dt><a id="guc-max-standby-streaming-delay"/><span class="term"><code class="varname">max_standby_streaming_delay</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.9.5.3.6.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        When hot standby is active, this parameter determines how long the
+        When Hot Standby is active, this parameter determines how long the
         standby server should wait before canceling standby queries that
         conflict with about-to-be-applied WAL entries, as described in
         <a class="xref" href="ch27s04.html#hot-standby-conflict" title="27.4.2. Handling Query Conflicts">Section 27.4.2</a>.
@@ -469,7 +465,7 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
         log file by reducing the value of this parameter. On a system with
         low WAL activity, increasing it reduces the amount of requests necessary
         to access WAL archives, something useful for example in cloud
-        environments where the number of times an infrastructure is accessed
+        environments where the amount of times an infrastructure is accessed
         is taken into account.
        </p></dd><dt><a id="guc-recovery-min-apply-delay"/><span class="term"><code class="varname">recovery_min_apply_delay</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.9.5.3.12.1.3" class="indexterm"/>
@@ -505,11 +501,6 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
         state, until the standby is promoted or triggered. After that the standby
         will end recovery without further waiting.
        </p><p>
-        WAL records must be kept on the standby until they are ready to be
-        applied. Therefore, longer delays will result in a greater accumulation
-        of WAL files, increasing disk space requirements for the standby's
-        <code class="filename">pg_wal</code> directory.
-       </p><p>
         This parameter is intended for use with streaming replication deployments;
         however, if the parameter is specified it will be honored in all cases
         except crash recovery.
@@ -533,7 +524,7 @@ ANY <em class="replaceable"><code>num_sync</code></em> ( <em class="replaceable"
       <code class="varname">wal_receiver_status_interval</code> and
       <code class="varname">wal_retrieve_retry_interval</code> configuration parameters
       affect the logical replication workers as well.
-     </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-max-logical-replication-workers"/><span class="term"><code class="varname">max_logical_replication_workers</code> (<code class="type">integer</code>)
+     </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-max-logical-replication-workers"/><span class="term"><code class="varname">max_logical_replication_workers</code> (<code class="type">int</code>)
       <a id="id-1.6.7.9.6.4.1.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Specifies maximum number of logical replication workers. This includes

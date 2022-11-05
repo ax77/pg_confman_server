@@ -19,9 +19,8 @@
         practice. On a heavily loaded server you might want to raise it.
         Ideally the setting should exceed your typical transaction time,
         so as to improve the odds that a lock will be released before
-        the waiter decides to check for deadlock.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        the waiter decides to check for deadlock.  Only superusers can change
+        this setting.
        </p><p>
         When <a class="xref" href="ch20s08.html#guc-log-lock-waits">log_lock_waits</a> is set,
         this parameter also determines the amount of time to wait before

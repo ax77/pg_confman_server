@@ -216,9 +216,9 @@
         the socket, and allows long running queries to be aborted sooner if
         the kernel reports that the connection is closed.
        </p><p>
-        This option relies on kernel events exposed by Linux, macOS, illumos
-        and the BSD family of operating systems, and is not currently available
-        on other systems.
+        This option is currently available only on systems that support the
+        non-standard <code class="symbol">POLLRDHUP</code> extension to the
+        <code class="symbol">poll</code> system call, including Linux.
        </p><p>
         If the value is specified without units, it is taken as milliseconds.
         The default value is <code class="literal">0</code>, which disables connection
@@ -313,13 +313,7 @@
          complete solution is found.  At that time, this option will
          be removed.
         </p></div></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-connection-ssl"/>20.3.3. SSL</h2></div></div></div><p>
-      See <a class="xref" href="ch19s09.html" title="19.9. Secure TCP/IP Connections with SSL">Section 19.9</a> for more information about setting up
-      <acronym class="acronym">SSL</acronym>. The configuration parameters for controlling
-      transfer encryption using <acronym class="acronym">TLS</acronym> protocols are named
-      <code class="literal">ssl</code> for historic reasons, even though support for
-      the <acronym class="acronym">SSL</acronym> protocol has been deprecated.
-      <acronym class="acronym">SSL</acronym> is in this context used interchangeably with
-      <acronym class="acronym">TLS</acronym>.
+      See <a class="xref" href="ch19s09.html" title="19.9. Secure TCP/IP Connections with SSL">Section 19.9</a> for more information about setting up SSL.
      </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-ssl"/><span class="term"><code class="varname">ssl</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.6.4.3.1.1.3" class="indexterm"/>
       </span></dt><dd><p>
@@ -348,7 +342,7 @@
        </p></dd><dt><a id="guc-ssl-crl-file"/><span class="term"><code class="varname">ssl_crl_file</code> (<code class="type">string</code>)
       <a id="id-1.6.7.6.4.3.4.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        Specifies the name of the file containing the SSL client certificate
+        Specifies the name of the file containing the SSL server certificate
         revocation list (CRL).
         Relative paths are relative to the data directory.
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
@@ -358,7 +352,7 @@
        </p></dd><dt><a id="guc-ssl-crl-dir"/><span class="term"><code class="varname">ssl_crl_dir</code> (<code class="type">string</code>)
       <a id="id-1.6.7.6.4.3.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        Specifies the name of the directory containing the SSL client
+        Specifies the name of the directory containing the SSL server
         certificate revocation list (CRL).  Relative paths are relative to the
         data directory.  This parameter can only be set in
         the <code class="filename">postgresql.conf</code> file or on the server command

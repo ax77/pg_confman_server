@@ -62,8 +62,7 @@
         and writable by all users.  Setting this variable to <code class="literal">on</code>
         disables the new privilege checks, for compatibility with prior
         releases.  The default is <code class="literal">off</code>.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        Only superusers can change this setting.
        </p><p>
         Setting this variable does not disable all security checks related to
         large objects — only those for which the default behavior has
@@ -76,7 +75,7 @@
         output of <span class="command"><strong>EXPLAIN</strong></span> as well as the results of functions
         like <code class="function">pg_get_viewdef</code>.  See also the
         <code class="option">--quote-all-identifiers</code> option of
-        <a class="xref" href="rn02re264.html" title="pg_dump"><span class="refentrytitle"><span class="application">pg_dump</span></span></a> and <a class="xref" href="rn02re265.html" title="pg_dumpall"><span class="refentrytitle"><span class="application">pg_dumpall</span></span></a>.
+        <a class="xref" href="rn02re263.html" title="pg_dump"><span class="refentrytitle"><span class="application">pg_dump</span></span></a> and <a class="xref" href="rn02re264.html" title="pg_dumpall"><span class="refentrytitle"><span class="application">pg_dumpall</span></span></a>.
        </p></dd><dt><a id="guc-standard-conforming-strings"/><span class="term"><code class="varname">standard_conforming_strings</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.16.2.2.6.1.3" class="indexterm"/>
       <a id="id-1.6.7.16.2.2.6.1.4" class="indexterm"/>

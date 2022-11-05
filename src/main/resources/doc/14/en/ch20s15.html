@@ -20,7 +20,7 @@
       <a id="id-1.6.7.18.3.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Reports whether data checksums are enabled for this cluster.
-        See <a class="xref" href="rn03re274.html#app-initdb-data-checksums">data checksums</a> for more information.
+        See <a class="xref" href="rn03re273.html#app-initdb-data-checksums">data checksums</a> for more information.
        </p></dd><dt><a id="guc-data-directory-mode"/><span class="term"><code class="varname">data_directory_mode</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.18.3.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
@@ -29,7 +29,7 @@
         had at server startup.
         (On Microsoft Windows this parameter will always display
         <code class="literal">0700</code>.) See
-        <a class="xref" href="rn03re274.html#app-initdb-allow-group-access">group access</a> for more information.
+        <a class="xref" href="rn03re273.html#app-initdb-allow-group-access">group access</a> for more information.
        </p></dd><dt><a id="guc-debug-assertions"/><span class="term"><code class="varname">debug_assertions</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.18.3.4.1.3" class="indexterm"/>
       </span></dt><dd><p>
@@ -115,37 +115,21 @@
       </span></dt><dd><p>
         Reports the version number of the server as an integer. It is determined
         by the value of <code class="literal">PG_VERSION_NUM</code> when building the server.
-       </p></dd><dt><a id="guc-shared-memory-size"/><span class="term"><code class="varname">shared_memory_size</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.18.3.16.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        Reports the size of the main shared memory area, rounded up to the
-        nearest megabyte.
-       </p></dd><dt><a id="guc-shared-memory-size-in-huge-pages"/><span class="term"><code class="varname">shared_memory_size_in_huge_pages</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.18.3.17.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        Reports the number of huge pages that are needed for the main shared
-        memory area based on the specified <a class="xref" href="ch20s04.html#guc-huge-page-size">huge_page_size</a>.
-        If huge pages are not supported, this will be <code class="literal">-1</code>.
-       </p><p>
-        This setting is supported only on <span class="productname">Linux</span>.  It
-        is always set to <code class="literal">-1</code> on other platforms.  For more
-        details about using huge pages on <span class="productname">Linux</span>, see
-        <a class="xref" href="ch19s04.html#linux-huge-pages" title="19.4.5. Linux Huge Pages">Section 19.4.5</a>.
        </p></dd><dt><a id="guc-ssl-library"/><span class="term"><code class="varname">ssl_library</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.18.3.18.1.3" class="indexterm"/>
+      <a id="id-1.6.7.18.3.16.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Reports the name of the SSL library that this
         <span class="productname">PostgreSQL</span> server was built with (even if
         SSL is not currently configured or in use on this instance), for
         example <code class="literal">OpenSSL</code>, or an empty string if none.
        </p></dd><dt><a id="guc-wal-block-size"/><span class="term"><code class="varname">wal_block_size</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.18.3.19.1.3" class="indexterm"/>
+      <a id="id-1.6.7.18.3.17.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Reports the size of a WAL disk block.  It is determined by the value
         of <code class="literal">XLOG_BLCKSZ</code> when building the server. The default value
         is 8192 bytes.
        </p></dd><dt><a id="guc-wal-segment-size"/><span class="term"><code class="varname">wal_segment_size</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.18.3.20.1.3" class="indexterm"/>
+      <a id="id-1.6.7.18.3.18.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Reports the size of write ahead log segments.  The default value is
         16MB. See <a class="xref" href="ch30s05.html" title="30.5. WAL Configuration">Section 30.5</a> for more information.

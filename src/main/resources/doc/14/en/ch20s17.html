@@ -6,30 +6,16 @@
      databases.  As such, they have been excluded from the sample
      <code class="filename">postgresql.conf</code> file.  Note that many of these
      parameters require special source compilation flags to work at all.
-    </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-allow-in-place-tablespaces"/><span class="term"><code class="varname">allow_in_place_tablespaces</code> (<code class="type">boolean</code>)
+    </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-allow-system-table-mods"/><span class="term"><code class="varname">allow_system_table_mods</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.20.3.1.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        Allows tablespaces to be created as directories inside
-        <code class="filename">pg_tblspc</code>, when an empty location string
-        is provided to the <span class="command"><strong>CREATE TABLESPACE</strong></span> command.  This
-        is intended to allow testing replication scenarios where primary and
-        standby servers are running on the same machine.  Such directories
-        are likely to confuse backup tools that expect to find only symbolic
-        links in that location.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
-       </p></dd><dt><a id="guc-allow-system-table-mods"/><span class="term"><code class="varname">allow_system_table_mods</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Allows modification of the structure of system tables as well as
         certain other risky actions on system tables.  This is otherwise not
         allowed even for superusers.  Ill-advised use of this setting can
         cause irretrievable data loss or seriously corrupt the database
-        system.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        system.  Only superusers can change this setting.
        </p></dd><dt><a id="guc-backtrace-functions"/><span class="term"><code class="varname">backtrace_functions</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.20.3.3.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter contains a comma-separated list of C function names.
         If an error is raised and the name of the internal C function where
@@ -40,10 +26,9 @@
         Backtrace support is not available on all platforms, and the quality
         of the backtraces depends on compilation options.
        </p><p>
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        This parameter can only be set by superusers.
        </p></dd><dt><a id="guc-debug-discard-caches"/><span class="term"><code class="varname">debug_discard_caches</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.20.3.4.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
         When set to <code class="literal">1</code>, each system catalog cache entry is
         invalidated at the first possible opportunity, whether or not
@@ -68,7 +53,7 @@
         will always be <code class="literal">0</code> and attempts to set it to another
         value will raise an error.
        </p></dd><dt><a id="guc-force-parallel-mode"/><span class="term"><code class="varname">force_parallel_mode</code> (<code class="type">enum</code>)
-      <a id="id-1.6.7.20.3.5.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.4.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Allows the use of parallel queries for testing purposes even in cases
         where no performance benefit is expected.
@@ -100,14 +85,14 @@
         in <code class="literal">EXPLAIN</code> output so that the output matches what
         would be obtained if this setting were turned <code class="literal">off</code>.
        </p></dd><dt><a id="guc-ignore-system-indexes"/><span class="term"><code class="varname">ignore_system_indexes</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.6.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Ignore system indexes when reading system tables (but still
         update the indexes when modifying the tables).  This is useful
         when recovering from damaged system indexes.
         This parameter cannot be changed after session start.
        </p></dd><dt><a id="guc-post-auth-delay"/><span class="term"><code class="varname">post_auth_delay</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.20.3.7.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.6.1.3" class="indexterm"/>
       </span></dt><dd><p>
         The amount of time to delay when a new
         server process is started, after it conducts the
@@ -117,7 +102,7 @@
         A value of zero (the default) disables the delay.
         This parameter cannot be changed after session start.
        </p></dd><dt><a id="guc-pre-auth-delay"/><span class="term"><code class="varname">pre_auth_delay</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.20.3.8.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.7.1.3" class="indexterm"/>
       </span></dt><dd><p>
         The amount of time to delay just after a
         new server process is forked, before it conducts the
@@ -129,7 +114,7 @@
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.
        </p></dd><dt><a id="guc-trace-notify"/><span class="term"><code class="varname">trace_notify</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.9.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.8.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Generates a great amount of debugging output for the
         <span class="command"><strong>LISTEN</strong></span> and <span class="command"><strong>NOTIFY</strong></span>
@@ -138,12 +123,12 @@
         <code class="literal">DEBUG1</code> or lower to send this output to the
         client or server logs, respectively.
        </p></dd><dt><a id="guc-trace-recovery-messages"/><span class="term"><code class="varname">trace_recovery_messages</code> (<code class="type">enum</code>)
-      <a id="id-1.6.7.20.3.10.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.9.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Enables logging of recovery-related debugging output that otherwise
         would not be logged. This parameter allows the user to override the
         normal setting of <a class="xref" href="ch20s08.html#guc-log-min-messages">log_min_messages</a>, but only for
-        specific messages. This is intended for use in debugging hot standby.
+        specific messages. This is intended for use in debugging Hot Standby.
         Valid values are <code class="literal">DEBUG5</code>, <code class="literal">DEBUG4</code>,
         <code class="literal">DEBUG3</code>, <code class="literal">DEBUG2</code>, <code class="literal">DEBUG1</code>, and
         <code class="literal">LOG</code>.  The default, <code class="literal">LOG</code>, does not affect
@@ -155,14 +140,14 @@
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.
        </p></dd><dt><a id="guc-trace-sort"/><span class="term"><code class="varname">trace_sort</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.11.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.10.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If on, emit information about resource usage during sort operations.
         This parameter is only available if the <code class="symbol">TRACE_SORT</code> macro
         was defined when <span class="productname">PostgreSQL</span> was compiled.
         (However, <code class="symbol">TRACE_SORT</code> is currently defined by default.)
        </p></dd><dt><span class="term"><code class="varname">trace_locks</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.12.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.11.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If on, emit information about lock usage.  Information dumped
         includes the type of lock operation, the type of lock and the unique
@@ -193,7 +178,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">trace_lwlocks</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.13.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.12.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If on, emit information about lightweight lock usage.  Lightweight
         locks are intended primarily to provide mutual exclusion of access
@@ -203,7 +188,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">trace_userlocks</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.14.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.13.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If on, emit information about user lock usage.  Output is the same
         as for <code class="symbol">trace_locks</code>, only for advisory locks.
@@ -212,7 +197,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">trace_lock_oidmin</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.20.3.15.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.14.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If set, do not trace locks for tables below this OID (used to avoid
         output on system tables).
@@ -221,7 +206,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">trace_lock_table</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.20.3.16.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.15.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Unconditionally trace locks on this table (OID).
        </p><p>
@@ -229,7 +214,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">debug_deadlocks</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.17.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.16.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If set, dumps information about all current locks when a
         deadlock timeout occurs.
@@ -238,7 +223,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><span class="term"><code class="varname">log_btree_build_stats</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.18.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.17.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If set, logs system resource usage statistics (memory and CPU) on
         various B-tree operations.
@@ -247,7 +232,7 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         macro was defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><a id="guc-wal-consistency-checking"/><span class="term"><code class="varname">wal_consistency_checking</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.20.3.19.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.18.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter is intended to be used to check for bugs in the WAL
         redo routines.  When enabled, full-page images of any buffers modified
@@ -265,20 +250,19 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         the supported resource managers are <code class="literal">heap</code>,
         <code class="literal">heap2</code>, <code class="literal">btree</code>, <code class="literal">hash</code>,
         <code class="literal">gin</code>, <code class="literal">gist</code>, <code class="literal">sequence</code>,
-        <code class="literal">spgist</code>, <code class="literal">brin</code>, and <code class="literal">generic</code>.
-        Extensions may define additional resource managers. Only superusers and users with
-        the appropriate <code class="literal">SET</code> privilege can change this setting.
+        <code class="literal">spgist</code>, <code class="literal">brin</code>, and <code class="literal">generic</code>. Only
+        superusers can change this setting.
        </p></dd><dt><a id="guc-wal-debug"/><span class="term"><code class="varname">wal_debug</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.20.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.19.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If on, emit WAL-related debugging output. This parameter is
         only available if the <code class="symbol">WAL_DEBUG</code> macro was
         defined when <span class="productname">PostgreSQL</span> was
         compiled.
        </p></dd><dt><a id="guc-ignore-checksum-failure"/><span class="term"><code class="varname">ignore_checksum_failure</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.21.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.20.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        Only has effect if <a class="xref" href="rn03re274.html#app-initdb-data-checksums">data checksums</a> are enabled.
+        Only has effect if <a class="xref" href="rn03re273.html#app-initdb-data-checksums">data checksums</a> are enabled.
        </p><p>
         Detection of a checksum failure during a read normally causes
         <span class="productname">PostgreSQL</span> to report an error, aborting the current
@@ -289,11 +273,9 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         you to get past the error and retrieve undamaged tuples that might still be
         present in the table if the block header is still sane. If the header is
         corrupt an error will be reported even if this option is enabled. The
-        default setting is <code class="literal">off</code>.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        default setting is <code class="literal">off</code>, and it can only be changed by a superuser.
        </p></dd><dt><a id="guc-zero-damaged-pages"/><span class="term"><code class="varname">zero_damaged_pages</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.22.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.21.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Detection of a damaged page header normally causes
         <span class="productname">PostgreSQL</span> to report an error, aborting the current
@@ -308,11 +290,10 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         data from the damaged pages of a table.  Zeroed-out pages are not
         forced to disk so it is recommended to recreate the table or
         the index before turning this parameter off again.  The
-        default setting is <code class="literal">off</code>.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        default setting is <code class="literal">off</code>, and it can only be changed
+        by a superuser.
        </p></dd><dt><a id="guc-ignore-invalid-pages"/><span class="term"><code class="varname">ignore_invalid_pages</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.23.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.22.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If set to <code class="literal">off</code> (the default), detection of
         WAL records having references to invalid pages during
@@ -328,29 +309,28 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         The parameter can only be set at server start. It only has effect
         during recovery or in standby mode.
        </p></dd><dt><a id="guc-jit-debugging-support"/><span class="term"><code class="varname">jit_debugging_support</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.24.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.23.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If LLVM has the required functionality, register generated functions
         with <span class="productname">GDB</span>.  This makes debugging easier.
         The default setting is <code class="literal">off</code>.
         This parameter can only be set at server start.
        </p></dd><dt><a id="guc-jit-dump-bitcode"/><span class="term"><code class="varname">jit_dump_bitcode</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.25.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.24.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Writes the generated <span class="productname">LLVM</span> IR out to the
         file system, inside <a class="xref" href="ch20s02.html#guc-data-directory">data_directory</a>. This is only
         useful for working on the internals of the JIT implementation.
         The default setting is <code class="literal">off</code>.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        This parameter can only be changed by a superuser.
        </p></dd><dt><a id="guc-jit-expressions"/><span class="term"><code class="varname">jit_expressions</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.26.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.25.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Determines whether expressions are JIT compiled, when JIT compilation
         is activated (see <a class="xref" href="ch32s02.html" title="32.2. When to JIT?">Section 32.2</a>).  The default is
         <code class="literal">on</code>.
        </p></dd><dt><a id="guc-jit-profiling-support"/><span class="term"><code class="varname">jit_profiling_support</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.27.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.26.1.3" class="indexterm"/>
       </span></dt><dd><p>
         If LLVM has the required functionality, emit the data needed to allow
         <span class="productname">perf</span> to profile functions generated by JIT.
@@ -359,13 +339,13 @@ LOG:  CleanUpLock: deleting: lock(0xb7acd844) id(24688,24696,0,0,0,1)
         The default setting is <code class="literal">off</code>.
         This parameter can only be set at server start.
        </p></dd><dt><a id="guc-jit-tuple-deforming"/><span class="term"><code class="varname">jit_tuple_deforming</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.28.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.27.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Determines whether tuple deforming is JIT compiled, when JIT
         compilation is activated (see <a class="xref" href="ch32s02.html" title="32.2. When to JIT?">Section 32.2</a>).
         The default is <code class="literal">on</code>.
        </p></dd><dt><a id="guc-remove-temp-files-after-crash"/><span class="term"><code class="varname">remove_temp_files_after_crash</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.20.3.29.1.3" class="indexterm"/>
+      <a id="id-1.6.7.20.3.28.1.3" class="indexterm"/>
       </span></dt><dd><p>
         When set to <code class="literal">on</code>, which is the default,
         <span class="productname">PostgreSQL</span> will automatically remove

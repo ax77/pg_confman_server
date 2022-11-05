@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,68 +14,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class DocsReader {
+public class PgDocSettingsReader {
 
-	class Dto implements Serializable {
-		private static final long serialVersionUID = 8581194533134262353L;
-
-		String title;
-		List<PgSettingDocs> settings;
-		List<Dto> sub;
-
-		public Dto() {
-			this.settings = new ArrayList<>();
-			this.sub = new ArrayList<>();
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public void setTitle(String title) {
-			this.title = title;
-		}
-
-		public List<PgSettingDocs> getSettings() {
-			return settings;
-		}
-
-		public void setSettings(List<PgSettingDocs> settings) {
-			this.settings = settings;
-		}
-
-		public List<Dto> getSub() {
-			return sub;
-		}
-
-		public void setSub(List<Dto> sub) {
-			this.sub = sub;
-		}
-
-		public void addSub(Dto e) {
-			this.sub.add(e);
-		}
-
-	}
-
-	private String readFilenameToText(String filename) throws IOException {
-		InputStream is = getClass().getClassLoader().getResourceAsStream("doc/" + filename);
+	private String readFilenameToText(String filename, String lang) throws IOException {
+		InputStream is = getClass().getClassLoader().getResourceAsStream("doc/14/" + lang + "/" + filename);
 
 		String text = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)).lines()
 				.collect(Collectors.joining("\n"));
 
 		is.close();
 		return text;
-	}
-
-	String getTitle(Elements topChilds) {
-		Element titleNode = topChilds.remove(0);
-		if (!titleNode.hasClass("titlepage")) {
-			throw new RuntimeException("expect titlepage");
-		}
-		String text = titleNode.text();
-		text = text.substring(text.indexOf(' '));
-		return text.trim();
 	}
 
 	private boolean hasSect2(Elements topChilds) {
@@ -88,8 +35,23 @@ public class DocsReader {
 		return false;
 	}
 
-	public List<PgSettingDocs> parseDocs() throws IOException {
+	public PgDocSettingsList readDocs() throws IOException {
 
+		PgDocSettingsList listEn = readSettings("en");
+		PgDocSettingsList listRu = readSettings("ru");
+
+		for (PgDocSettingsEntry e : listEn.getList()) {
+			PgDocSettingsEntry ru = listRu.find(e.getSettingName());
+			if (ru != null) {
+				e.setSettingDescRu(ru.getSettingDescEn());
+			}
+		}
+
+		return listEn;
+
+	}
+
+	private List<String> getFilenames() {
 		List<String> files = new ArrayList<String>();
 		files.add("ch20s02.html");
 		files.add("ch20s03.html");
@@ -107,12 +69,16 @@ public class DocsReader {
 		files.add("ch20s15.html");
 		files.add("ch20s16.html");
 		files.add("ch20s17.html");
+		return files;
+	}
 
-		List<Dto> dtos = new ArrayList<>();
-		List<PgSettingDocs> flat = new ArrayList<>();
+	private PgDocSettingsList readSettings(String lang) throws IOException {
+
+		List<String> files = getFilenames();
+		List<PgDocSettingsEntry> flat = new ArrayList<PgDocSettingsEntry>();
 
 		for (String filename : files) {
-			Document doc = Jsoup.parse(readFilenameToText(filename));
+			Document doc = Jsoup.parse(readFilenameToText(filename, lang));
 
 			//////////////////////////////////////////////////////////////////////
 			// section I loop
@@ -121,16 +87,10 @@ public class DocsReader {
 				throw new RuntimeException("expect 1 node");
 			}
 			Elements topChilds = top.get(0).children();
-			String title = getTitle(topChilds);
-
-			Dto dto = new Dto();
-			dto.setTitle(title);
 
 			if (!hasSect2(topChilds)) {
-				List<PgSettingDocs> settings = parseVarlist(topChilds);
+				List<PgDocSettingsEntry> settings = parseVarlist(topChilds);
 				flat.addAll(settings);
-
-				dto.setSettings(settings);
 			}
 
 			else {
@@ -141,35 +101,19 @@ public class DocsReader {
 					if (!e.hasClass("sect2")) {
 						continue;
 					}
-					Elements subChilds = e.children();
-					title = getTitle(subChilds);
-
-					List<PgSettingDocs> settings = parseVarlist(subChilds);
+					List<PgDocSettingsEntry> settings = parseVarlist(e.children());
 					flat.addAll(settings);
-
-					Dto sub = new Dto();
-					sub.setTitle(title);
-					sub.setSettings(settings);
-					dto.addSub(sub);
 				}
 			}
 
-			dtos.add(dto);
 		}
 
-		return flat;
-
-//		FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/docs.json");
-//		ObjectMapper mapper = new ObjectMapper();
-//		String res = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(flat);
-//		fw.write(res + "\n");
-//		fw.close();
-
+		return new PgDocSettingsList(flat);
 	}
 
-	private List<PgSettingDocs> parseVarlist(Elements subChilds) {
+	private List<PgDocSettingsEntry> parseVarlist(Elements subChilds) {
 
-		List<PgSettingDocs> settings = new ArrayList<>();
+		List<PgDocSettingsEntry> settings = new ArrayList<PgDocSettingsEntry>();
 
 		for (Element settingNode : subChilds.select("dl.variablelist")) {
 			if (!settingNode.tagName().equals("dl")) {
@@ -210,10 +154,10 @@ public class DocsReader {
 				// that's fine, because there are few groups like this -> debug_print_ and
 				// _stats...
 				if (settingName.size() == 1) {
-					settings.add(new PgSettingDocs(settingName.get(0), settingDesc));
+					settings.add(new PgDocSettingsEntry(settingName.get(0), settingDesc));
 				} else {
 					for (String s : settingName) {
-						settings.add(new PgSettingDocs(s, new ArrayList<String>()));
+						settings.add(new PgDocSettingsEntry(s, new ArrayList<String>()));
 					}
 				}
 			}
@@ -221,4 +165,5 @@ public class DocsReader {
 
 		return settings;
 	}
+
 }

@@ -267,7 +267,7 @@
         which the planner believes will actually be touched by the scan which
         is relevant.  This parameter is also used to decide whether a
         particular index can participate in a parallel vacuum.  See
-        <a class="xref" href="rn01re252.html" title="VACUUM"><span class="refentrytitle">VACUUM</span></a>.
+        <a class="xref" href="rn01re251.html" title="VACUUM"><span class="refentrytitle">VACUUM</span></a>.
         If this value is specified without units, it is taken as blocks,
         that is <code class="symbol">BLCKSZ</code> bytes, typically 8kB.
         The default is 512 kilobytes (<code class="literal">512kB</code>).
@@ -331,7 +331,7 @@
       complex queries (those joining many relations), at the cost of producing
       plans that are sometimes inferior to those found by the normal
       exhaustive-search algorithm.
-      For more information see <a class="xref" href="ch62.html" title="Chapter 62. Genetic Query Optimizer">Chapter 62</a>.
+      For more information see <a class="xref" href="ch60.html" title="Chapter 60. Genetic Query Optimizer">Chapter 60</a>.
      </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-geqo"/><span class="term"><code class="varname">geqo</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.10.4.3.1.1.3" class="indexterm"/>
       <a id="id-1.6.7.10.4.3.1.1.4" class="indexterm"/>
@@ -525,19 +525,5 @@ SELECT * FROM parent WHERE key = 2400;
         <code class="literal">force_generic_plan</code>.
         This setting is considered when a cached plan is to be executed,
         not when it is prepared.
-        For more information see <a class="xref" href="rn01re227.html" title="PREPARE"><span class="refentrytitle">PREPARE</span></a>.
-       </p></dd><dt><a id="guc-recursive-worktable-factor"/><span class="term"><code class="varname">recursive_worktable_factor</code> (<code class="type">floating point</code>)
-      <a id="id-1.6.7.10.5.2.8.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        Sets the planner's estimate of the average size of the working
-        table of a <a class="link" href="ch07s08.html#queries-with-recursive" title="7.8.2. Recursive Queries">recursive
-        query</a>, as a multiple of the estimated size of the initial
-        non-recursive term of the query.  This helps the planner choose
-        the most appropriate method for joining the working table to the
-        query's other tables.
-        The default value is <code class="literal">10.0</code>.  A smaller value
-        such as <code class="literal">1.0</code> can be helpful when the recursion
-        has low <span class="quote">“<span class="quote">fan-out</span>”</span> from one step to the next, as for
-        example in shortest-path queries.  Graph analytics queries may
-        benefit from larger-than-default values.
+        For more information see <a class="xref" href="rn01re226.html" title="PREPARE"><span class="refentrytitle">PREPARE</span></a>.
        </p></dd></dl></div></div></div></body></html>

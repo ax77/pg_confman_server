@@ -116,7 +116,7 @@
       <a id="id-1.6.7.7.2.2.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Sets the maximum number of transactions that can be in the
-        <span class="quote">“<span class="quote">prepared</span>”</span> state simultaneously (see <a class="xref" href="rn01re228.html" title="PREPARE TRANSACTION"><span class="refentrytitle">PREPARE TRANSACTION</span></a>).
+        <span class="quote">“<span class="quote">prepared</span>”</span> state simultaneously (see <a class="xref" href="rn01re227.html" title="PREPARE TRANSACTION"><span class="refentrytitle">PREPARE TRANSACTION</span></a>).
         Setting this parameter to zero (which is the default)
         disables the prepared-transaction feature.
         This parameter can only be set at server start.
@@ -167,15 +167,16 @@
         operations can use.  The final limit is determined by
         multiplying <code class="varname">work_mem</code> by
         <code class="varname">hash_mem_multiplier</code>.  The default value is
-        2.0, which makes hash-based operations use twice the usual
-        <code class="varname">work_mem</code> base amount.
+        1.0, which makes hash-based operations subject to the same
+        simple <code class="varname">work_mem</code> maximum as sort-based
+        operations.
        </p><p>
         Consider increasing <code class="varname">hash_mem_multiplier</code> in
         environments where spilling by query operations is a regular
         occurrence, especially when simply increasing
         <code class="varname">work_mem</code> results in memory pressure (memory
         pressure typically takes the form of intermittent out of
-        memory errors).  The default setting of 2.0 is often effective with
+        memory errors).  A setting of 1.5 or 2.0 may be effective with
         mixed workloads.  Higher settings in the range of 2.0 - 8.0 or
         more may be effective in environments where
         <code class="varname">work_mem</code> has already been increased to 40MB
@@ -248,8 +249,7 @@
         The default setting is two megabytes (<code class="literal">2MB</code>), which
         is conservatively small and unlikely to risk crashes.  However,
         it might be too small to allow execution of complex functions.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        Only superusers can change this setting.
        </p><p>
         Setting <code class="varname">max_stack_depth</code> higher than
         the actual kernel limit will mean that a runaway recursive function
@@ -284,7 +284,7 @@
         and <code class="literal">mmap</code> (to simulate shared memory using
         memory-mapped files stored in the data directory).
         Not all values are supported on all platforms; the first supported
-        option is usually the default for that platform.  The use of the
+        option is the default for that platform.  The use of the
         <code class="literal">mmap</code> option, which is not the default on any platform,
         is generally discouraged because the operating system may write
         modified pages back to disk repeatedly, increasing system I/O load;
@@ -316,8 +316,7 @@
         this limit will be canceled.
         If this value is specified without units, it is taken as kilobytes.
         <code class="literal">-1</code> (the default) means no limit.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        Only superusers can change this setting.
        </p><p>
         This setting constrains the total space used at any instant by all
         temporary files used by a given <span class="productname">PostgreSQL</span> process.
@@ -337,7 +336,7 @@
         files</span>”</span> failures, try reducing this setting.
         This parameter can only be set at server start.
        </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-resource-vacuum-cost"/>20.4.4. Cost-based Vacuum Delay</h2></div></div></div><p>
-      During the execution of <a class="xref" href="rn01re252.html" title="VACUUM"><span class="refentrytitle">VACUUM</span></a>
+      During the execution of <a class="xref" href="rn01re251.html" title="VACUUM"><span class="refentrytitle">VACUUM</span></a>
       and <a class="xref" href="rn01re114.html" title="ANALYZE"><span class="refentrytitle">ANALYZE</span></a>
       commands, the system maintains an
       internal counter that keeps track of the estimated cost of the

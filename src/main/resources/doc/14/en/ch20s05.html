@@ -15,27 +15,25 @@
         decoding.  Each level includes the information logged at all lower
         levels.  This parameter can only be set at server start.
        </p><p>
-        The <code class="literal">minimal</code> level generates the least WAL
-        volume.  It logs no row information for permanent relations
-        in transactions that create or
-        rewrite them.  This can make operations much faster (see
+        In <code class="literal">minimal</code> level, no information is logged for
+        permanent relations for the remainder of a transaction that creates or
+        rewrites them.  This can make operations much faster (see
         <a class="xref" href="ch14s04.html#populate-pitr" title="14.4.7. Disable WAL Archival and Streaming Replication">Section 14.4.7</a>).  Operations that initiate this
         optimization include:
         </p><table border="0" summary="Simple list" class="simplelist"><tr><td><span class="command"><strong>ALTER ... SET TABLESPACE</strong></span></td></tr><tr><td><span class="command"><strong>CLUSTER</strong></span></td></tr><tr><td><span class="command"><strong>CREATE TABLE</strong></span></td></tr><tr><td><span class="command"><strong>REFRESH MATERIALIZED VIEW</strong></span>
          (without <code class="option">CONCURRENTLY</code>)</td></tr><tr><td><span class="command"><strong>REINDEX</strong></span></td></tr><tr><td><span class="command"><strong>TRUNCATE</strong></span></td></tr></table><p>
-        However, minimal WAL does not contain sufficient information for
-        point-in-time recovery, so <code class="literal">replica</code> or
-        higher must be used to enable continuous archiving
-        (<a class="xref" href="ch20s05.html#guc-archive-mode">archive_mode</a>) and streaming binary replication.
-        In fact, the server will not even start in this mode if
-        <code class="varname">max_wal_senders</code> is non-zero.
+        But minimal WAL does not contain enough information to reconstruct the
+        data from a base backup and the WAL logs, so <code class="literal">replica</code> or
+        higher must be used to enable WAL archiving
+        (<a class="xref" href="ch20s05.html#guc-archive-mode">archive_mode</a>) and streaming replication.
         Note that changing <code class="varname">wal_level</code> to
-        <code class="literal">minimal</code> makes previous base backups unusable
-        for point-in-time recovery and standby servers.
+        <code class="literal">minimal</code> makes any base backups taken before
+        unavailable for archive recovery and standby server, which may
+        lead to data loss.
        </p><p>
         In <code class="literal">logical</code> level, the same information is logged as
-        with <code class="literal">replica</code>, plus information needed to
-        extract logical change sets from the WAL. Using a level of
+        with <code class="literal">replica</code>, plus information needed to allow
+        extracting logical change sets from the WAL. Using a level of
         <code class="literal">logical</code> will increase the WAL volume, particularly if many
         tables are configured for <code class="literal">REPLICA IDENTITY FULL</code> and
         many <span class="command"><strong>UPDATE</strong></span> and <span class="command"><strong>DELETE</strong></span> statements are
@@ -233,25 +231,17 @@
         enabled.
        </p><p>
         This parameter can only be set at server start. The default value is <code class="literal">off</code>.
-       </p></dd><dt><a id="guc-wal-compression"/><span class="term"><code class="varname">wal_compression</code> (<code class="type">enum</code>)
+       </p></dd><dt><a id="guc-wal-compression"/><span class="term"><code class="varname">wal_compression</code> (<code class="type">boolean</code>)
       <a id="id-1.6.7.8.3.2.7.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        This parameter enables compression of WAL using the specified
-        compression method.
-        When enabled, the <span class="productname">PostgreSQL</span>
+        When this parameter is <code class="literal">on</code>, the <span class="productname">PostgreSQL</span>
         server compresses full page images written to WAL when
         <a class="xref" href="ch20s05.html#guc-full-page-writes">full_page_writes</a> is on or during a base backup.
         A compressed page image will be decompressed during WAL replay.
-        The supported methods are <code class="literal">pglz</code>,
-        <code class="literal">lz4</code> (if <span class="productname">PostgreSQL</span>
-        was compiled with <code class="option">--with-lz4</code>) and
-        <code class="literal">zstd</code> (if <span class="productname">PostgreSQL</span>
-        was compiled with <code class="option">--with-zstd</code>).
         The default value is <code class="literal">off</code>.
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        Only superusers can change this setting.
        </p><p>
-        Enabling compression can reduce the WAL volume without
+        Turning this parameter on can reduce the WAL volume without
         increasing the risk of unrecoverable data corruption,
         but at the cost of some extra CPU spent on the compression during
         WAL logging and on the decompression during WAL replay.
@@ -356,8 +346,7 @@
         performed if <code class="varname">fsync</code> is disabled.
         If this value is specified without units, it is taken as microseconds.
         The default <code class="varname">commit_delay</code> is zero (no delay).
-        Only superusers and users with the appropriate <code class="literal">SET</code>
-        privilege can change this setting.
+        Only superusers can change this setting.
        </p><p>
         In <span class="productname">PostgreSQL</span> releases prior to 9.3,
         <code class="varname">commit_delay</code> behaved differently and was much
@@ -442,7 +431,7 @@
         Maximum size to let the WAL grow during automatic
         checkpoints. This is a soft limit; WAL size can exceed
         <code class="varname">max_wal_size</code> under special circumstances, such as
-        heavy load, a failing <code class="varname">archive_command</code> or <code class="varname">archive_library</code>, or a high
+        heavy load, a failing <code class="varname">archive_command</code>, or a high
         <code class="varname">wal_keep_size</code> setting.
         If this value is specified without units, it is taken as megabytes.
         The default is 1 GB.
@@ -467,8 +456,7 @@
       </span></dt><dd><p>
         When <code class="varname">archive_mode</code> is enabled, completed WAL segments
         are sent to archive storage by setting
-        <a class="xref" href="ch20s05.html#guc-archive-command">archive_command</a> or
-        <a class="xref" href="ch20s05.html#guc-archive-library">archive_library</a>. In addition to <code class="literal">off</code>,
+        <a class="xref" href="ch20s05.html#guc-archive-command">archive_command</a>. In addition to <code class="literal">off</code>,
         to disable, there are two modes: <code class="literal">on</code>, and
         <code class="literal">always</code>. During normal operation, there is no
         difference between the two modes, but when set to <code class="literal">always</code>
@@ -477,12 +465,9 @@
         or streamed with streaming replication will be archived (again). See
         <a class="xref" href="ch27s02.html#continuous-archiving-in-standby" title="27.2.9. Continuous Archiving in Standby">Section 27.2.9</a> for details.
        </p><p>
-        <code class="varname">archive_mode</code> is a separate setting from
-        <code class="varname">archive_command</code> and
-        <code class="varname">archive_library</code> so that
-        <code class="varname">archive_command</code> and
-        <code class="varname">archive_library</code> can be changed without leaving
-        archiving mode.
+        <code class="varname">archive_mode</code> and <code class="varname">archive_command</code> are
+        separate variables so that <code class="varname">archive_command</code> can be
+        changed without leaving archiving mode.
         This parameter can only be set at server start.
         <code class="varname">archive_mode</code> cannot be enabled when
         <code class="varname">wal_level</code> is set to <code class="literal">minimal</code>.
@@ -502,11 +487,9 @@
        </p><p>
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.  It is ignored unless
-        <code class="varname">archive_mode</code> was enabled at server start and
-        <code class="varname">archive_library</code> is set to an empty string.
+        <code class="varname">archive_mode</code> was enabled at server start.
         If <code class="varname">archive_command</code> is an empty string (the default) while
-        <code class="varname">archive_mode</code> is enabled (and <code class="varname">archive_library</code>
-        is set to an empty string), WAL archiving is temporarily
+        <code class="varname">archive_mode</code> is enabled, WAL archiving is temporarily
         disabled, but the server continues to accumulate WAL segment files in
         the expectation that a command will soon be provided.  Setting
         <code class="varname">archive_command</code> to a command that does nothing but
@@ -514,22 +497,10 @@
         Windows), effectively disables
         archiving, but also breaks the chain of WAL files needed for
         archive recovery, so it should only be used in unusual circumstances.
-       </p></dd><dt><a id="guc-archive-library"/><span class="term"><code class="varname">archive_library</code> (<code class="type">string</code>)
+       </p></dd><dt><a id="guc-archive-timeout"/><span class="term"><code class="varname">archive_timeout</code> (<code class="type">integer</code>)
       <a id="id-1.6.7.8.5.2.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
-        The library to use for archiving completed WAL file segments.  If set to
-        an empty string (the default), archiving via shell is enabled, and
-        <a class="xref" href="ch20s05.html#guc-archive-command">archive_command</a> is used.  Otherwise, the specified
-        shared library is used for archiving.  For more information, see
-        <a class="xref" href="ch26s03.html#backup-archiving-wal" title="26.3.1. Setting Up WAL Archiving">Section 26.3.1</a> and
-        <a class="xref" href="ch51.html" title="Chapter 51. Archive Modules">Chapter 51</a>.
-       </p><p>
-        This parameter can only be set in the
-        <code class="filename">postgresql.conf</code> file or on the server command line.
-       </p></dd><dt><a id="guc-archive-timeout"/><span class="term"><code class="varname">archive_timeout</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.8.5.2.4.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        The <a class="xref" href="ch20s05.html#guc-archive-command">archive_command</a> or <a class="xref" href="ch20s05.html#guc-archive-library">archive_library</a> is only invoked for
+        The <a class="xref" href="ch20s05.html#guc-archive-command">archive_command</a> is only invoked for
         completed WAL segments. Hence, if your server generates little WAL
         traffic (or has slack periods where it does so), there could be a
         long delay between the completion of a transaction and its safe
@@ -551,36 +522,7 @@
         If this value is specified without units, it is taken as seconds.
         This parameter can only be set in the
         <code class="filename">postgresql.conf</code> file or on the server command line.
-       </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-wal-recovery"/>20.5.4. Recovery</h2></div></div></div><a id="id-1.6.7.8.6.2" class="indexterm"/><p>
-     This section describes the settings that apply to recovery in general,
-     affecting crash recovery, streaming replication and archive-based
-     replication.
-    </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-recovery-prefetch"/><span class="term"><code class="varname">recovery_prefetch</code> (<code class="type">enum</code>)
-      <a id="id-1.6.7.8.6.4.1.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        Whether to try to prefetch blocks that are referenced in the WAL that
-        are not yet in the buffer pool, during recovery.  Valid values are
-        <code class="literal">off</code>, <code class="literal">on</code> and
-        <code class="literal">try</code> (the default).  The setting
-        <code class="literal">try</code> enables
-        prefetching only if the operating system provides the
-        <code class="function">posix_fadvise</code> function, which is currently used
-        to implement prefetching.  Note that some operating systems provide the
-        function, but it doesn't do anything.
-       </p><p>
-        Prefetching blocks that will soon be needed can reduce I/O wait times
-        during recovery with some workloads.
-        See also the <a class="xref" href="ch20s05.html#guc-wal-decode-buffer-size">wal_decode_buffer_size</a> and
-        <a class="xref" href="ch20s04.html#guc-maintenance-io-concurrency">maintenance_io_concurrency</a> settings, which limit
-        prefetching activity.
-       </p></dd><dt><a id="guc-wal-decode-buffer-size"/><span class="term"><code class="varname">wal_decode_buffer_size</code> (<code class="type">integer</code>)
-      <a id="id-1.6.7.8.6.4.2.1.3" class="indexterm"/>
-      </span></dt><dd><p>
-        A limit on how far ahead the server can look in the WAL, to find
-        blocks to prefetch.  If this value is specified without units, it is
-        taken as bytes.
-        The default is 512kB.
-       </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-wal-archive-recovery"/>20.5.5. Archive Recovery</h2></div></div></div><a id="id-1.6.7.8.7.2" class="indexterm"/><p>
+       </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-wal-archive-recovery"/>20.5.4. Archive Recovery</h2></div></div></div><a id="id-1.6.7.8.6.2" class="indexterm"/><p>
      This section describes the settings that apply only for the duration of
      the recovery.  They must be reset for any subsequent recovery you wish to
      perform.
@@ -591,25 +533,25 @@
      recovery is used to recover from data loss.
     </p><p>
      To start the server in standby mode, create a file called
-     <code class="filename">standby.signal</code><a id="id-1.6.7.8.7.5.2" class="indexterm"/>
+     <code class="filename">standby.signal</code><a id="id-1.6.7.8.6.5.2" class="indexterm"/>
      in the data directory.  The server will enter recovery and will not stop
      recovery when the end of archived WAL is reached, but will keep trying to
      continue recovery by connecting to the sending server as specified by the
      <code class="varname">primary_conninfo</code> setting and/or by fetching new WAL
      segments using <code class="varname">restore_command</code>.  For this mode, the
      parameters from this section and <a class="xref" href="ch20s06.html#runtime-config-replication-standby" title="20.6.3. Standby Servers">Section 20.6.3</a> are of interest.
-     Parameters from <a class="xref" href="ch20s05.html#runtime-config-wal-recovery-target" title="20.5.6. Recovery Target">Section 20.5.6</a> will
+     Parameters from <a class="xref" href="ch20s05.html#runtime-config-wal-recovery-target" title="20.5.5. Recovery Target">Section 20.5.5</a> will
      also be applied but are typically not useful in this mode.
     </p><p>
      To start the server in targeted recovery mode, create a file called
-     <code class="filename">recovery.signal</code><a id="id-1.6.7.8.7.6.2" class="indexterm"/>
+     <code class="filename">recovery.signal</code><a id="id-1.6.7.8.6.6.2" class="indexterm"/>
      in the data directory.  If both <code class="filename">standby.signal</code> and
      <code class="filename">recovery.signal</code> files are created, standby mode
      takes precedence.  Targeted recovery mode ends when the archived WAL is
      fully replayed, or when <code class="varname">recovery_target</code> is reached.
-     In this mode, the parameters from both this section and <a class="xref" href="ch20s05.html#runtime-config-wal-recovery-target" title="20.5.6. Recovery Target">Section 20.5.6</a> will be used.
+     In this mode, the parameters from both this section and <a class="xref" href="ch20s05.html#runtime-config-wal-recovery-target" title="20.5.5. Recovery Target">Section 20.5.5</a> will be used.
     </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-restore-command"/><span class="term"><code class="varname">restore_command</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.7.7.1.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.6.7.1.1.3" class="indexterm"/>
       </span></dt><dd><p>
         The local shell command to execute to retrieve an archived segment of
         the WAL file series. This parameter is required for archive recovery,
@@ -645,7 +587,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.
        </p></dd><dt><a id="guc-archive-cleanup-command"/><span class="term"><code class="varname">archive_cleanup_command</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.7.7.2.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.6.7.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This optional parameter specifies a shell command that will be executed
         at every restartpoint.  The purpose of
@@ -659,7 +601,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         may be safely removed.
         This information can be used to truncate the archive to just the
         minimum required to support restart from the current restore.
-        The <a class="xref" href="rn03re275.html" title="pg_archivecleanup"><span class="refentrytitle"><span class="application">pg_archivecleanup</span></span></a> module
+        The <a class="xref" href="rn03re274.html" title="pg_archivecleanup"><span class="refentrytitle"><span class="application">pg_archivecleanup</span></span></a> module
         is often used in <code class="varname">archive_cleanup_command</code> for
         single-standby configurations, for example:
 </p><pre class="programlisting">archive_cleanup_command = 'pg_archivecleanup /mnt/server/archivedir %r'</pre><p>
@@ -679,7 +621,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.
        </p></dd><dt><a id="guc-recovery-end-command"/><span class="term"><code class="varname">recovery_end_command</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.7.7.3.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.6.7.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies a shell command that will be executed once only
         at the end of recovery. This parameter is optional. The purpose of the
@@ -696,7 +638,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
        </p><p>
         This parameter can only be set in the <code class="filename">postgresql.conf</code>
         file or on the server command line.
-       </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-wal-recovery-target"/>20.5.6. Recovery Target</h2></div></div></div><p>
+       </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h2 class="title"><a id="runtime-config-wal-recovery-target"/>20.5.5. Recovery Target</h2></div></div></div><p>
       By default, recovery will recover to the end of the WAL log. The
       following parameters can be used to specify an earlier stopping point.
       At most one of <code class="varname">recovery_target</code>,
@@ -706,7 +648,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
       file, an error will be raised.
       These parameters can only be set at server start.
      </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-recovery-target"/><span class="term"><code class="varname">recovery_target</code><code class="literal"> = 'immediate'</code>
-      <a id="id-1.6.7.8.8.3.1.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.3.1.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies that recovery should end as soon as a
         consistent state is reached, i.e., as early as possible. When restoring
@@ -716,12 +658,12 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         Technically, this is a string parameter, but <code class="literal">'immediate'</code>
         is currently the only allowed value.
        </p></dd><dt><a id="guc-recovery-target-name"/><span class="term"><code class="varname">recovery_target_name</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.8.3.2.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.3.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies the named restore point (created with
         <code class="function">pg_create_restore_point()</code>) to which recovery will proceed.
        </p></dd><dt><a id="guc-recovery-target-time"/><span class="term"><code class="varname">recovery_target_time</code> (<code class="type">timestamp</code>)
-      <a id="id-1.6.7.8.8.3.3.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.3.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies the time stamp up to which recovery
         will proceed.
@@ -736,7 +678,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         numeric offset from UTC, or you can write a full time zone name,
         e.g., <code class="literal">Europe/Helsinki</code> not <code class="literal">EEST</code>.
        </p></dd><dt><a id="guc-recovery-target-xid"/><span class="term"><code class="varname">recovery_target_xid</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.8.3.4.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.3.4.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies the transaction ID up to which recovery
         will proceed. Keep in mind
@@ -747,7 +689,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         The precise stopping point is also influenced by
         <a class="xref" href="ch20s05.html#guc-recovery-target-inclusive">recovery_target_inclusive</a>.
        </p></dd><dt><a id="guc-recovery-target-lsn"/><span class="term"><code class="varname">recovery_target_lsn</code> (<code class="type">pg_lsn</code>)
-      <a id="id-1.6.7.8.8.3.5.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.3.5.1.3" class="indexterm"/>
       </span></dt><dd><p>
         This parameter specifies the LSN of the write-ahead log location up
         to which recovery will proceed. The precise stopping point is also
@@ -758,7 +700,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
        The following options further specify the recovery target, and affect
        what happens when the target is reached:
      </p><div class="variablelist"><dl class="variablelist"><dt><a id="guc-recovery-target-inclusive"/><span class="term"><code class="varname">recovery_target_inclusive</code> (<code class="type">boolean</code>)
-      <a id="id-1.6.7.8.8.5.1.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.5.1.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Specifies whether to stop just after the specified recovery target
         (<code class="literal">on</code>), or just before the recovery target
@@ -770,7 +712,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         having exactly the target WAL location (LSN), commit time, or transaction ID, respectively, will
         be included in the recovery.  Default is <code class="literal">on</code>.
        </p></dd><dt><a id="guc-recovery-target-timeline"/><span class="term"><code class="varname">recovery_target_timeline</code> (<code class="type">string</code>)
-      <a id="id-1.6.7.8.8.5.2.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.5.2.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Specifies recovering into a particular timeline.  The value can be a
         numeric timeline ID or a special value.  The value
@@ -785,7 +727,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         a state that itself was reached after a point-in-time recovery.
         See <a class="xref" href="ch26s03.html#backup-timelines" title="26.3.5. Timelines">Section 26.3.5</a> for discussion.
        </p></dd><dt><a id="guc-recovery-target-action"/><span class="term"><code class="varname">recovery_target_action</code> (<code class="type">enum</code>)
-      <a id="id-1.6.7.8.8.5.3.1.3" class="indexterm"/>
+      <a id="id-1.6.7.8.7.5.3.1.3" class="indexterm"/>
       </span></dt><dd><p>
         Specifies what action the server should take once the recovery target is
         reached. The default is <code class="literal">pause</code>, which means recovery will
@@ -799,7 +741,7 @@ restore_command = 'copy "C:\\server\\archivedir\\%f" "%p"'  # Windows
         is the most desirable point for recovery.
         The paused state can be resumed by
         using <code class="function">pg_wal_replay_resume()</code> (see
-        <a class="xref" href="ch09s27.html#functions-recovery-control-table" title="Table 9.90. Recovery Control Functions">Table 9.90</a>), which then
+        <a class="xref" href="ch09s27.html#functions-recovery-control-table" title="Table 9.89. Recovery Control Functions">Table 9.89</a>), which then
         causes recovery to end. If this recovery target is not the
         desired stopping point, then shut down the server, change the
         recovery target settings to a later target and restart to

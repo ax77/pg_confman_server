@@ -27,7 +27,16 @@ public class PgSettingsEntry implements Serializable {
 
     List<String> docsEn = new ArrayList<>();
     List<String> docsRu = new ArrayList<>();
-    String enumvalues = "";
+    String enumvalues;
+    List<PgSettingsExtra> printableSettingsValues = new ArrayList<>();
+
+    public List<PgSettingsExtra> getPrintableSettingsValues() {
+        return printableSettingsValues;
+    }
+
+    public void setPrintableSettingsValues(List<PgSettingsExtra> printableSettingsValues) {
+        this.printableSettingsValues = printableSettingsValues;
+    }
 
     public String getName() {
         return name;
@@ -185,6 +194,10 @@ public class PgSettingsEntry implements Serializable {
 
     public void addDocsEn(String e) {
         this.docsEn.add(e);
+    }
+
+    public void addDocsRu(String e) {
+        this.docsRu.add(e);
     }
 
 }

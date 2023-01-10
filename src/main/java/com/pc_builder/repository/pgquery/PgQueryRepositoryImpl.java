@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.hibernate.engine.jdbc.internal.BasicFormatterImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -94,13 +96,19 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
         return query;
     }
 
+    private void applySetting(List<PgSettingsExtra> printableSettingsValues, String name, Object o) {
+        if (o != null && o.toString().trim().length() > 0) {
+            printableSettingsValues.add(new PgSettingsExtra(name, o.toString()));
+        }
+    }
+
     private List<PgSettingsEntry> getSettingsValues(StringBuilder query) {
 
         List<PgSettingsEntry> result = jdbcTemplate.query(query.toString(),
                 BeanPropertyRowMapper.newInstance(PgSettingsEntry.class));
 
         for (PgSettingsEntry e : result) {
-            String q = "select enumvals from pg_settings where name = '" + e.getName() + "';";
+            String q = "select enumvals from pg_settings where enumvals is not null AND name = '" + e.getName() + "';";
             List<Map<String, Object>> res = jdbcTemplate.queryForList(q);
             if (res.size() == 1) {
                 Map<String, Object> ent = res.get(0);
@@ -111,6 +119,34 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
                 }
                 e.setEnumvalues(enumvals);
             }
+        }
+
+        //vartype:
+        //
+        //enum   
+        //string 
+        //bool   
+        //integer
+        //real   
+
+        for (PgSettingsEntry e : result) {
+            e.addDocsEn(e.getShort_desc());
+            e.addDocsRu(e.getShort_desc());
+
+            List<PgSettingsExtra> printableSettingsValues = new ArrayList<>();
+
+            applySetting(printableSettingsValues, "unit", e.getUnit());
+            applySetting(printableSettingsValues, "context", e.getContext());
+            applySetting(printableSettingsValues, "source", e.getSource());
+            applySetting(printableSettingsValues, "vartype", e.getVartype());
+            applySetting(printableSettingsValues, "min_val", e.getMin_val());
+            applySetting(printableSettingsValues, "max_val", e.getMax_val());
+            applySetting(printableSettingsValues, "boot_val", e.getBoot_val());
+            applySetting(printableSettingsValues, "reset_val", e.getReset_val());
+            applySetting(printableSettingsValues, "sourcefile", e.getSourcefile());
+            applySetting(printableSettingsValues, "enumvals", e.getEnumvalues());
+
+            e.setPrintableSettingsValues(printableSettingsValues);
         }
 
         return result;
@@ -186,6 +222,9 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
     public PgQueryResult doSomeQuery(String q) {
         // String q = getResourceFileAsString("queries/top_tables.sql");
 
+        String res = new BasicFormatterImpl().format(q);
+        System.out.println(res);
+
         // Trying to execute the query given.
         List<Map<String, Object>> maybe = new ArrayList<Map<String, Object>>();
         try {
@@ -223,28 +262,6 @@ public class PgQueryRepositoryImpl implements PgQueryRepository {
         } catch (Exception e) {
             return new PgQueryResult(e.getMessage());
         }
-
-        // meta-info
-        // DatabaseMetaData databaseMetaData;
-        // try {
-        // databaseMetaData =
-        // jdbcTemplate.getDataSource().getConnection().getMetaData();
-        // try (ResultSet columns = databaseMetaData.getColumns(null, null, "auth_user",
-        // null)) {
-        // while (columns.next()) {
-        // String columnName = columns.getString("COLUMN_NAME");
-        // String columnSize = columns.getString("COLUMN_SIZE");
-        // String datatype = columns.getString("DATA_TYPE");
-        // String isNullable = columns.getString("IS_NULLABLE");
-        // String isAutoIncrement = columns.getString("IS_AUTOINCREMENT");
-        // System.out.println(columnName + " " + columnSize + " " + datatype + " " +
-        // isNullable + " " + isAutoIncrement);
-        // }
-        // }
-        // } catch (SQLException e1) {
-        // e1.printStackTrace();
-        // }
-        //
 
         // The data itself
         List<Map<String, String>> rows = new ArrayList<>();
